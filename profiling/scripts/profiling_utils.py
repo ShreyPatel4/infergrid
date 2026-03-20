@@ -141,7 +141,7 @@ class GPUSample:
     """A single GPU metrics sample."""
 
     timestamp: float
-    gpu_index: int
+    gpu_index: int | str
     utilization_pct: float
     memory_used_mb: float
     memory_total_mb: float
@@ -220,6 +220,7 @@ class GPUMetricsCollector:
 
         while not self._stop_event.is_set():
             ts = time.time()
+            rows = []
             for gpu_idx, handle in handles:
                 try:
                     util = pynvml.nvmlDeviceGetUtilizationRates(handle)
@@ -233,19 +234,38 @@ class GPUMetricsCollector:
                     except pynvml.NVMLError:
                         clock = 0
 
-                    self._samples.append(
-                        GPUSample(
-                            timestamp=ts,
-                            gpu_index=gpu_idx,
-                            utilization_pct=float(util.gpu),
-                            memory_used_mb=mem.used / (1024 * 1024),
-                            memory_total_mb=mem.total / (1024 * 1024),
-                            power_draw_w=power,
-                            sm_clock_mhz=clock,
-                        )
+                    sample = GPUSample(
+                        timestamp=ts,
+                        gpu_index=gpu_idx,
+                        utilization_pct=float(util.gpu),
+                        memory_used_mb=mem.used / (1024 * 1024),
+                        memory_total_mb=mem.total / (1024 * 1024),
+                        power_draw_w=power,
+                        sm_clock_mhz=clock,
                     )
+                    self._samples.append(sample)
+                    rows.append(sample)
                 except Exception as exc:
                     logger.debug("Error sampling GPU %d: %s", gpu_idx, exc)
+
+            if len(handles) > 1 and rows:
+                avg_util = sum(r.utilization_pct for r in rows if r.utilization_pct >= 0) / len(rows)
+                sum_mem_used = sum(r.memory_used_mb for r in rows if r.memory_used_mb >= 0)
+                sum_mem_tot = sum(r.memory_total_mb for r in rows if r.memory_total_mb >= 0)
+                sum_pwr = sum(r.power_draw_w for r in rows if r.power_draw_w >= 0)
+                avg_clk = sum(r.sm_clock_mhz for r in rows if r.sm_clock_mhz >= 0) / len(rows)
+                
+                self._samples.append(
+                    GPUSample(
+                        timestamp=ts,
+                        gpu_index="all",
+                        utilization_pct=avg_util,
+                        memory_used_mb=sum_mem_used,
+                        memory_total_mb=sum_mem_tot,
+                        power_draw_w=sum_pwr,
+                        sm_clock_mhz=int(avg_clk),
+                    )
+                )
 
             self._stop_event.wait(self._interval_s)
 
@@ -530,11 +550,17 @@ class BenchmarkResults:
 
         # GPU utilization from collector if available
         if self.gpu_metrics_df is not None and not self.gpu_metrics_df.empty:
+            df_to_use = self.gpu_metrics_df
+            if "gpu_index" in df_to_use.columns:
+                mask = df_to_use["gpu_index"] == "all"
+                if mask.any():
+                    df_to_use = df_to_use[mask]
+            
             result["gpu_utilization_mean"] = float(
-                self.gpu_metrics_df["utilization_pct"].mean()
+                df_to_use["utilization_pct"].mean()
             )
             result["gpu_utilization_p50"] = float(
-                self.gpu_metrics_df["utilization_pct"].median()
+                df_to_use["utilization_pct"].median()
             )
 
         return result

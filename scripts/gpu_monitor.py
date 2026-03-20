@@ -224,9 +224,26 @@ def run_collector(
 
     try:
         while not _shutdown_requested:
+            rows = []
             for gpu_id, handle in handles:
                 row = sample_gpu(pynvml_mod, gpu_id, handle)
+                rows.append(row)
                 _buffer.append(row)
+                sample_count += 1
+
+            if len(handles) > 1 and rows:
+                # Add aggregate row computing sum for memory/power and average for util/temperature
+                ts = rows[0][0]
+                avg_util = sum(r[2] for r in rows if r[2] >= 0) / len(rows)
+                sum_mem_used = sum(r[3] for r in rows if r[3] >= 0)
+                sum_mem_tot = sum(r[4] for r in rows if r[4] >= 0)
+                sum_pwr = sum(r[5] for r in rows if r[5] >= 0)
+                avg_clk = sum(r[6] for r in rows if r[6] >= 0) / len(rows)
+                avg_temp = sum(r[7] for r in rows if r[7] >= 0) / len(rows)
+                
+                agg_row = [ts, "all", round(avg_util, 1), round(sum_mem_used, 1), 
+                           round(sum_mem_tot, 1), round(sum_pwr, 1), int(avg_clk), int(avg_temp)]
+                _buffer.append(agg_row)
                 sample_count += 1
 
             # Flush buffer periodically

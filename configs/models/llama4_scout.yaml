@@ -1,0 +1,36 @@
+# Llama 4 Scout — MoE model (16 experts, 17B active / 109B total)
+model_id: "meta-llama/Llama-4-Scout-17B-16E-Instruct"
+short_name: "llama4-scout"
+architecture: "moe"
+total_params_b: 109
+active_params_b: 17
+num_experts: 16
+
+# Hardware requirements
+min_gpus: 4
+tensor_parallel_size: 4
+recommended_gpu: "A100-80GB"
+estimated_weight_size_gb: 218
+
+# Serving config
+dtype: "bfloat16"
+max_model_len: 32768
+gpu_memory_utilization: 0.85
+
+# vLLM specific — needs v0.8.3+, override generation config for attention temp tuning
+vllm_extra_args:
+  - "--override-generation-config={\"attn_temperature_tuning\": true}"
+vllm_min_version: "0.8.3"
+
+# SGLang specific
+sglang_extra_args: []
+mem_fraction_static: 0.80
+
+# Benchmark config — slightly reduced concurrency since MoE uses more memory
+concurrency_levels: [1, 8, 32, 64, 128]
+num_requests: 200
+repeats: 3
+
+# Cost estimate (4x A100)
+estimated_hours: 10
+estimated_cost_per_hour: 5.50

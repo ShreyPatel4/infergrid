@@ -42,16 +42,18 @@ Three components communicating through a shared state object:
 ## Current Phase: I_1.0.0.3 — Cloud Runner Automation & Real Baseline Collection
 
 Cloud runner scripts for automated A100 profiling. One command to set up
-a fresh GPU instance, collect all baselines, and package results.
+a fresh GPU instance, collect all baselines, and package results. Multi-model
+support allows running baselines on dense (Llama 3.1 8B) and MoE (Llama 4 Scout) architectures.
 
 Key outputs:
-- Idempotent GPU environment setup script
-- Master orchestrator with 5-phase pipeline (checkpoint/resume capable)
-- Background GPU metrics collector (pynvml, 500ms polling)
-- Post-run summary generator
+- Idempotent GPU environment setup script with model validation
+- Master orchestrator with configuration routing (`--model-config`)
+- Background GPU metrics collector (pynvml, aggregate cross-GPU stats)
+- Post-run summary generator with cross-model comparison table
 
 ### Cloud runner scripts
-- `scripts/setup_gpu_env.sh` — idempotent A100 instance setup
+- `configs/models/*.yaml` — hardware, parallelism, and serving specs per model
+- `scripts/setup_gpu_env.sh` — idempotent instance setup
 - `scripts/run_all_baselines.sh` — master orchestrator (5 phases, signal handling)
 - `scripts/gpu_monitor.py` — background GPU metrics collector
 - `scripts/summarize_results.py` — post-run markdown summary generator
