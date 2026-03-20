@@ -210,6 +210,8 @@ async def run_external_profiling(
             summary = results.summary()
             summary["concurrency"] = concurrency
             summary["wall_time_ms"] = timer.elapsed_ms
+            summary["model_id"] = model
+            summary["model_short_name"] = model.split("/")[-1]
             
             if repeats > 1:
                 summary_path = external_dir / f"summary_{file_suffix}.json"

@@ -239,6 +239,8 @@ async def benchmark_engine(
         summary["engine"] = engine_name
         summary["concurrency"] = concurrency
         summary["wall_time_ms"] = timer.elapsed_ms
+        summary["model_id"] = model
+        summary["model_short_name"] = model.split("/")[-1]
         
         if repeats > 1:
             summary_path = output_dir / f"{engine_name}_{file_suffix}_summary.json"

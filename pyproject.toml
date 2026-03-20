@@ -8,7 +8,7 @@ requires-python = ">=3.11"
 dependencies = [
     "numpy~=1.24",
     "pandas~=2.0",
-    "pyyaml~=6.0",
+    "pyyaml>=6.0",
     "prometheus-client~=0.19",
     "httpx~=0.25",
     "aiohttp~=3.9",
@@ -32,7 +32,7 @@ profiling = [
     "datasets~=2.14",
     "jupyter~=1.0",
     "ipykernel~=6.25",
-    "transformers~=4.30",
+    "transformers>=4.45",
 ]
 vllm = ["vllm~=0.6.0"]
 sglang = ["sglang~=0.3.0"]

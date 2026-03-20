@@ -26,19 +26,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Defaults
-MODEL_ID="meta-llama/Llama-3.1-8B-Instruct"
 VLLM_PORT=8000
 SGLANG_PORT=8001
-CONCURRENCY="1,8,32,64,128,256"
-NUM_REQUESTS=200
+CONCURRENCY=""
+NUM_REQUESTS=-1
+REPEATS=-1
 WORKLOAD="sharegpt"
 SEED=42
 PYSPY_DURATION=60
 DRY_RUN=false
 RESUME=false
+MODEL_CONFIG="configs/models/llama31_8b.yaml"
+SKIP_SGLANG=false
 
 # Directories
-RESULTS_DIR="$PROJECT_ROOT/results_$(date +%Y%m%d_%H%M%S)"
 CHECKPOINT_DIR="$PROJECT_ROOT/.checkpoints"
 
 # Colors
@@ -67,21 +68,25 @@ ENGINE_PID=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --model-config)  MODEL_CONFIG="$2"; shift 2 ;;
         --dry-run)       DRY_RUN=true; shift ;;
         --resume)        RESUME=true; shift ;;
         --concurrency)   CONCURRENCY="$2"; shift 2 ;;
         --num-requests)  NUM_REQUESTS="$2"; shift 2 ;;
+        --repeats)       REPEATS="$2"; shift 2 ;;
         --workload)      WORKLOAD="$2"; shift 2 ;;
         --seed)          SEED="$2"; shift 2 ;;
         --pyspy-duration) PYSPY_DURATION="$2"; shift 2 ;;
         --results-dir)   RESULTS_DIR="$2"; shift 2 ;;
         -h|--help)
-            echo "Usage: $0 [--dry-run] [--resume] [--concurrency LEVELS] [--num-requests N]"
+            echo "Usage: $0 [--model-config FILE] [--dry-run] [--resume]"
             echo "Options:"
+            echo "  --model-config      YAML config file (default: configs/models/llama31_8b.yaml)"
             echo "  --dry-run           Print plan without executing"
             echo "  --resume            Resume from last checkpoint"
-            echo "  --concurrency       Comma-separated levels (default: $CONCURRENCY)"
-            echo "  --num-requests      Requests per level (default: $NUM_REQUESTS)"
+            echo "  --concurrency       Comma-separated levels"
+            echo "  --num-requests      Requests per level"
+            echo "  --repeats           Number of benchmark repeats"
             echo "  --workload          Workload type (default: $WORKLOAD)"
             echo "  --seed              Random seed (default: $SEED)"
             echo "  --pyspy-duration    py-spy recording seconds (default: $PYSPY_DURATION)"
@@ -90,6 +95,44 @@ while [[ $# -gt 0 ]]; do
         *) log_error "Unknown option: $1"; exit 1 ;;
     esac
 done
+
+if [[ ! -f "$MODEL_CONFIG" ]]; then
+    log_warn "Config file not found: $MODEL_CONFIG, proceeding with defaults..."
+fi
+
+get_config() {
+    python3 -c "import yaml, sys; c=yaml.safe_load(open('$1')); val=c.get('$2', '$3'); print(val if val is not None else '$3')" 2>/dev/null || echo "$3"
+}
+
+MODEL_ID=$(get_config "$MODEL_CONFIG" "model_id" "meta-llama/Llama-3.1-8B-Instruct")
+SHORT_NAME=$(get_config "$MODEL_CONFIG" "short_name" "unknown")
+ARCHITECTURE=$(get_config "$MODEL_CONFIG" "architecture" "dense")
+TENSOR_PARALLEL=$(get_config "$MODEL_CONFIG" "tensor_parallel_size" "1")
+MAX_MODEL_LEN=$(get_config "$MODEL_CONFIG" "max_model_len" "8192")
+GPU_MEM_UTIL=$(get_config "$MODEL_CONFIG" "gpu_memory_utilization" "0.85")
+DTYPE=$(get_config "$MODEL_CONFIG" "dtype" "bfloat16")
+MEM_FRACTION=$(get_config "$MODEL_CONFIG" "mem_fraction_static" "0.85")
+EST_HOURS=$(get_config "$MODEL_CONFIG" "estimated_hours" "8")
+EST_COST_HR=$(get_config "$MODEL_CONFIG" "estimated_cost_per_hour" "1.50")
+
+# Pull arrays / defaults if not overridden
+if [[ -z "${RESULTS_DIR:-}" ]]; then
+    RESULTS_DIR="$PROJECT_ROOT/results_${SHORT_NAME}_$(date +%Y%m%d_%H%M%S)"
+fi
+
+if [[ "$CONCURRENCY" == "" ]]; then
+    CONCURRENCY=$(python3 -c "import yaml; c=yaml.safe_load(open('$MODEL_CONFIG')); print(','.join(map(str, c.get('concurrency_levels', [1,8,32,64,128,256]))))" 2>/dev/null || echo "1,8,32,64,128,256")
+fi
+
+if [[ "$NUM_REQUESTS" == "-1" ]]; then
+    NUM_REQUESTS=$(get_config "$MODEL_CONFIG" "num_requests" "200")
+fi
+
+if [[ "$REPEATS" == "-1" ]]; then
+    REPEATS=$(get_config "$MODEL_CONFIG" "repeats" "3")
+fi
+
+VLLM_EXTRA=$(python3 -c "import yaml; c=yaml.safe_load(open('$MODEL_CONFIG')); print(' '.join(c.get('vllm_extra_args', [])))" 2>/dev/null || echo "")
 
 # ---------------------------------------------------------------------------
 # Signal handling — save partial results on Ctrl+C
@@ -165,14 +208,19 @@ start_vllm() {
     log_info "Starting vLLM server on port $VLLM_PORT..."
     python3 -m vllm.entrypoints.openai.api_server \
         --model "$MODEL_ID" \
-        --dtype bfloat16 \
-        --gpu-memory-utilization 0.8 \
         --port "$VLLM_PORT" \
+        --tensor-parallel-size "$TENSOR_PARALLEL" \
+        --dtype "$DTYPE" \
+        --gpu-memory-utilization "$GPU_MEM_UTIL" \
+        --max-model-len "$MAX_MODEL_LEN" \
+        --disable-log-requests \
+        $VLLM_EXTRA \
         &>"$RESULTS_DIR/vllm_server.log" &
     ENGINE_PID=$!
 
-    log_info "Waiting for vLLM to load model (up to 180s)..."
-    for i in $(seq 1 180); do
+    STARTUP_TIMEOUT=$((TENSOR_PARALLEL * 120 + 120))
+    log_info "Waiting for vLLM to load model (up to ${STARTUP_TIMEOUT}s)..."
+    for i in $(seq 1 $STARTUP_TIMEOUT); do
         if curl -s "http://localhost:$VLLM_PORT/v1/models" &>/dev/null; then
             log_ok "vLLM server ready (${i}s)"
             return 0
@@ -183,23 +231,51 @@ start_vllm() {
         fi
         sleep 1
     done
-    log_error "vLLM server timeout (180s)"
+    log_error "vLLM server timeout (${STARTUP_TIMEOUT}s)"
     return 1
 }
 
 start_sglang() {
+    if [ "$SKIP_SGLANG" = "true" ]; then
+        log_warn "SGLang is skipped for this model."
+        return 1
+    fi
+    
+    if [ "$ARCHITECTURE" = "moe" ] && [ -z "${SGLANG_MOE_SUPPORTED:-}" ]; then
+        log_info "Checking SGLang MoE support..."
+        SGLANG_SUPPORTED=true
+        timeout 180 python3 -m sglang.launch_server \
+            --model-path "$MODEL_ID" --tp "$TENSOR_PARALLEL" --port 19999 \
+            --dtype "$DTYPE" --max-total-tokens 4096 2>&1 | tail -5 || SGLANG_SUPPORTED=false
+        kill %1 2>/dev/null || true
+        sleep 10
+        
+        if [ "$SGLANG_SUPPORTED" = false ]; then
+            log_warn "SGLang does not support $MODEL_ID — skipping SGLang profiling"
+            log_info "This is expected for some MoE models. vLLM-only results will be collected."
+            SKIP_SGLANG=true
+            export SGLANG_MOE_SUPPORTED=false
+            return 1
+        else
+            export SGLANG_MOE_SUPPORTED=true
+        fi
+    fi
+
     log_info "Starting SGLang server on port $SGLANG_PORT..."
     python3 -m sglang.launch_server \
         --model-path "$MODEL_ID" \
-        --dtype bfloat16 \
-        --mem-fraction-static 0.8 \
+        --dtype "$DTYPE" \
+        --tp "$TENSOR_PARALLEL" \
+        --mem-fraction-static "$MEM_FRACTION" \
+        --max-total-tokens "$MAX_MODEL_LEN" \
         --port "$SGLANG_PORT" \
         --host 0.0.0.0 \
         &>"$RESULTS_DIR/sglang_server.log" &
     ENGINE_PID=$!
 
-    log_info "Waiting for SGLang to load model (up to 180s)..."
-    for i in $(seq 1 180); do
+    STARTUP_TIMEOUT=$((TENSOR_PARALLEL * 120 + 120))
+    log_info "Waiting for SGLang to load model (up to ${STARTUP_TIMEOUT}s)..."
+    for i in $(seq 1 $STARTUP_TIMEOUT); do
         if curl -s "http://localhost:$SGLANG_PORT/v1/models" &>/dev/null; then
             log_ok "SGLang server ready (${i}s)"
             return 0
@@ -210,7 +286,7 @@ start_sglang() {
         fi
         sleep 1
     done
-    log_error "SGLang server timeout (180s)"
+    log_error "SGLang server timeout (${STARTUP_TIMEOUT}s)"
     return 1
 }
 
@@ -259,14 +335,15 @@ print_plan() {
     echo "  Seed:         $SEED"
     echo "  Results:      $RESULTS_DIR"
     echo ""
+    TOTAL_COST=$(python3 -c "print(f'${EST_HOURS} * ${EST_COST_HR} = \${${EST_HOURS} * ${EST_COST_HR}:.2f}')")
     echo "  Phase 1: vLLM profiling          $(estimate_time 1)"
     echo "  Phase 2: SGLang profiling         $(estimate_time 2)"
     echo "  Phase 3: Head-to-head comparison  $(estimate_time 3)"
     echo "  Phase 4: py-spy flame graphs      $(estimate_time 4)"
     echo "  Phase 5: Package results          $(estimate_time 5)"
     echo ""
-    echo "  Estimated total: ~70-100 minutes"
-    echo "  Estimated cost:  ~\$2.15 (100 min × \$1.29/hr)"
+    echo "  Estimated total: ~${EST_HOURS} hours"
+    echo "  Estimated cost:  ~${TOTAL_COST}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
@@ -284,6 +361,10 @@ fi
 # Preflight
 check_gpu
 mkdir -p "$RESULTS_DIR"
+
+if [[ -f "$MODEL_CONFIG" ]]; then
+    cp "$MODEL_CONFIG" "$RESULTS_DIR/model_config.yaml"
+fi
 
 # Save run metadata
 cat > "$RESULTS_DIR/run_metadata.json" <<EOF
@@ -316,6 +397,7 @@ else
         --model "$MODEL_ID" \
         --concurrency "$CONCURRENCY" \
         --num-requests "$NUM_REQUESTS" \
+        --repeats "$REPEATS" \
         --workload "$WORKLOAD" \
         --output-dir "$RESULTS_DIR/profiling/vllm" \
         --seed "$SEED"
@@ -343,6 +425,7 @@ else
         --model "$MODEL_ID" \
         --concurrency "$CONCURRENCY" \
         --num-requests "$NUM_REQUESTS" \
+        --repeats "$REPEATS" \
         --workload "$WORKLOAD" \
         --output-dir "$RESULTS_DIR/profiling/sglang" \
         --seed "$SEED"
@@ -380,6 +463,7 @@ else
         --model "$MODEL_ID" \
         --concurrency "$CONCURRENCY" \
         --num-requests "$NUM_REQUESTS" \
+        --repeats "$REPEATS" \
         --workload all \
         --output-dir "$H2H_DIR" \
         --seed "$SEED"
@@ -397,6 +481,7 @@ else
         --model "$MODEL_ID" \
         --concurrency "$CONCURRENCY" \
         --num-requests "$NUM_REQUESTS" \
+        --repeats "$REPEATS" \
         --workload all \
         --output-dir "$H2H_DIR" \
         --seed "$SEED"

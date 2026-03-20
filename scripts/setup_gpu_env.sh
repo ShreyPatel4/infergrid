@@ -20,7 +20,33 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-MODEL_ID="meta-llama/Llama-3.1-8B-Instruct"
+# Default configurations
+MODEL_CONFIG="configs/models/llama31_8b.yaml"
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --model-config) MODEL_CONFIG="$2"; shift ;;
+        *) log_error "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+if [[ ! -f "$MODEL_CONFIG" ]]; then
+    log_warn "Config file not found: $MODEL_CONFIG, continuing without it..."
+fi
+
+# Config extraction helper
+get_config() {
+    python3 -c "import yaml; c=yaml.safe_load(open('$1')); print(c.get('$2', '$3'))"
+}
+
+MODEL_ID=$(get_config "$MODEL_CONFIG" "model_id" "meta-llama/Llama-3.1-8B-Instruct")
+TENSOR_PARALLEL=$(get_config "$MODEL_CONFIG" "tensor_parallel_size" "1")
+MIN_GPUS=$(get_config "$MODEL_CONFIG" "min_gpus" "1")
+EST_WEIGHT_GB=$(get_config "$MODEL_CONFIG" "estimated_weight_size_gb" "16")
+VLLM_MIN_VERSION=$(get_config "$MODEL_CONFIG" "vllm_min_version" "0.6.0")
+
 VLLM_PORT=8000
 SGLANG_PORT=8001
 
@@ -69,6 +95,12 @@ GPU_COUNT=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l | tr -d ' 
 
 log_ok "Driver: $DRIVER_VERSION"
 log_ok "GPU: $GPU_NAME ($GPU_MEMORY) x $GPU_COUNT"
+
+if [ "$GPU_COUNT" -lt "$MIN_GPUS" ]; then
+    log_error "Model requires $MIN_GPUS GPUs but only $GPU_COUNT found"
+    exit 1
+fi
+log_ok "GPU count satisfies minimum requirement ($MIN_GPUS)"
 
 # Log CUDA version if nvcc is available
 if command -v nvcc &>/dev/null; then
@@ -141,14 +173,34 @@ if [[ -z "${HF_TOKEN:-}" ]]; then
     exit 1
 fi
 
+# Check available disk space (~2x weight + 50GB buffer)
+REQUIRED_DISK=$((EST_WEIGHT_GB * 2 + 50))
+AVAILABLE_DISK=$(df -BG /root/.cache 2>/dev/null | tail -1 | awk '{print $4}' | tr -d 'G' || df -BG / 2>/dev/null | tail -1 | awk '{print $4}' | tr -d 'G')
+
+if [ "$AVAILABLE_DISK" -lt "$REQUIRED_DISK" ]; then
+    log_error "Need ${REQUIRED_DISK}GB disk but only ${AVAILABLE_DISK}GB available"
+    exit 1
+fi
+log_ok "Disk space sufficient (${AVAILABLE_DISK}GB available >= ${REQUIRED_DISK}GB required)"
+
 # Check if model is already cached
 MODEL_CACHE_DIR="$HOME/.cache/huggingface/hub/models--$(echo "$MODEL_ID" | tr '/' '--')"
 if [[ -d "$MODEL_CACHE_DIR" ]]; then
     log_ok "Model already cached at $MODEL_CACHE_DIR"
 else
-    log_info "Downloading $MODEL_ID (~16GB, this takes 5-10 minutes)..."
+    log_info "Downloading $MODEL_ID (~${EST_WEIGHT_GB}GB, this takes a while)..."
     huggingface-cli download "$MODEL_ID" --token "$HF_TOKEN"
     log_ok "Model downloaded successfully"
+fi
+
+# Verify vLLM version
+log_info "Verifying vLLM Version >= $VLLM_MIN_VERSION"
+VLLM_ACTUAL=$(python3 -c "import vllm; print(vllm.__version__)" 2>/dev/null || echo "0.0.0")
+if python3 -c "import packaging.version as v; import sys; sys.exit(0 if v.parse('$VLLM_ACTUAL') >= v.parse('$VLLM_MIN_VERSION') else 1)"; then
+    log_ok "vLLM version ($VLLM_ACTUAL) satisfies minimum requirement ($VLLM_MIN_VERSION)"
+else
+    log_error "vLLM version $VLLM_ACTUAL is too old. Need >= $VLLM_MIN_VERSION"
+    exit 1
 fi
 
 # ---- Step 4: vLLM smoke test ----
@@ -159,19 +211,21 @@ log_info "Step 4: vLLM smoke test..."
 pkill -f "vllm.entrypoints" 2>/dev/null || true
 sleep 2
 
-log_info "Starting vLLM server on port $VLLM_PORT..."
+log_info "Starting vLLM server on port $VLLM_PORT (TP=$TENSOR_PARALLEL)..."
 python3 -m vllm.entrypoints.openai.api_server \
     --model "$MODEL_ID" \
     --dtype bfloat16 \
     --gpu-memory-utilization 0.8 \
+    --tensor-parallel-size "$TENSOR_PARALLEL" \
     --port "$VLLM_PORT" \
     &>/tmp/vllm_setup.log &
 VLLM_PID=$!
 
+STARTUP_TIMEOUT=$((TENSOR_PARALLEL * 120 + 60))
 # Wait for server to be healthy
-log_info "Waiting for vLLM server to load model (up to 180s)..."
+log_info "Waiting for vLLM server to load model (up to ${STARTUP_TIMEOUT}s)..."
 VLLM_READY=false
-for i in $(seq 1 180); do
+for i in $(seq 1 $STARTUP_TIMEOUT); do
     if curl -s "http://localhost:$VLLM_PORT/v1/models" &>/dev/null; then
         VLLM_READY=true
         break
@@ -188,7 +242,7 @@ for i in $(seq 1 180); do
 done
 
 if [[ "$VLLM_READY" != "true" ]]; then
-    log_error "vLLM server failed to start within 180s"
+    log_error "vLLM server failed to start within ${STARTUP_TIMEOUT}s"
     kill "$VLLM_PID" 2>/dev/null || true
     exit 1
 fi
@@ -222,20 +276,22 @@ log_info "Step 5: SGLang smoke test..."
 pkill -f "sglang" 2>/dev/null || true
 sleep 2
 
-log_info "Starting SGLang server on port $SGLANG_PORT..."
+log_info "Starting SGLang server on port $SGLANG_PORT (TP=$TENSOR_PARALLEL)..."
 python3 -m sglang.launch_server \
     --model-path "$MODEL_ID" \
     --dtype bfloat16 \
+    --tp "$TENSOR_PARALLEL" \
     --mem-fraction-static 0.8 \
     --port "$SGLANG_PORT" \
     --host 0.0.0.0 \
     &>/tmp/sglang_setup.log &
 SGLANG_PID=$!
 
+STARTUP_TIMEOUT=$((TENSOR_PARALLEL * 120 + 60))
 # Wait for server to be healthy
-log_info "Waiting for SGLang server to load model (up to 180s)..."
+log_info "Waiting for SGLang server to load model (up to ${STARTUP_TIMEOUT}s)..."
 SGLANG_READY=false
-for i in $(seq 1 180); do
+for i in $(seq 1 $STARTUP_TIMEOUT); do
     if curl -s "http://localhost:$SGLANG_PORT/v1/models" &>/dev/null; then
         SGLANG_READY=true
         break
@@ -252,7 +308,7 @@ for i in $(seq 1 180); do
 done
 
 if [[ "$SGLANG_READY" != "true" ]]; then
-    log_error "SGLang server failed to start within 180s"
+    log_error "SGLang server failed to start within ${STARTUP_TIMEOUT}s"
     kill "$SGLANG_PID" 2>/dev/null || true
     exit 1
 fi
