@@ -49,13 +49,19 @@ The fastest way to reproduce all results on a GPU instance:
 ```bash
 # 1. Set up the GPU environment (idempotent, safe to re-run)
 export HF_TOKEN=hf_...
-bash scripts/setup_gpu_env.sh
+bash scripts/setup_gpu_env.sh --model-config configs/models/llama31_8b.yaml
 
 # 2. Run all phases (~70-100 min on A100)
-bash scripts/run_all_baselines.sh
+bash scripts/run_all_baselines.sh --model-config configs/models/llama31_8b.yaml
 
 # Or preview the plan first:
-bash scripts/run_all_baselines.sh --dry-run
+bash scripts/run_all_baselines.sh --model-config configs/models/llama31_8b.yaml --dry-run
+
+# ---------------------------------------------------------------------------------
+# For Llama 4 Scout MoE (Requires 4x A100 80GB):
+# ---------------------------------------------------------------------------------
+bash scripts/setup_gpu_env.sh --model-config configs/models/llama4_scout.yaml
+bash scripts/run_all_baselines.sh --model-config configs/models/llama4_scout.yaml
 ```
 
 This runs 5 phases: vLLM profiling → SGLang profiling → head-to-head comparison → py-spy flame graphs → package results tarball.
