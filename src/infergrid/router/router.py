@@ -25,6 +25,7 @@ from infergrid.common.metrics import MetricsCollector
 from infergrid.engines.base import EngineAdapter
 from infergrid.engines.sglang_adapter.adapter import SGLangAdapter
 from infergrid.engines.vllm_adapter.adapter import VLLMAdapter
+from infergrid.router.admission import AdmissionController, AdmissionTimeoutError
 from infergrid.tenant.manager import TenantManager
 
 logger = logging.getLogger(__name__)
@@ -38,6 +39,14 @@ LENGTH_BUCKETS: list[tuple[str, int]] = [
     ("long", 4096),
     ("xlarge", 2**31),
 ]
+
+
+BUCKET_PRIORITY: dict[str, int] = {
+    "short": 0,
+    "medium": 1,
+    "long": 2,
+    "xlarge": 3,
+}
 
 
 def classify_request_length(max_tokens: int, input_tokens: int = 0) -> str:
@@ -146,6 +155,13 @@ class WorkloadRouter:
         self.metrics = metrics or MetricsCollector()
         self.cache_manager = cache_manager or CacheManager()
         self.tenant_manager = tenant_manager or TenantManager()
+
+        # Admission control -- prevents engine overload
+        self.admission_controller = AdmissionController(
+            max_concurrent=config.max_concurrent,
+            queue_size=config.admission_queue_size,
+            registry=self.metrics._registry,
+        )
 
         # model_id -> ModelState (only for currently loaded models)
         self._models: dict[str, ModelState] = {}
@@ -334,7 +350,8 @@ class WorkloadRouter:
     ) -> Any:
         """Route a single request to the appropriate engine.
 
-        Enforces tenant budgets, tracks metrics, and uses length-bucketed
+        Enforces tenant budgets, applies admission control to prevent
+        engine overload, tracks metrics, and uses length-bucketed
         scheduling for priority ordering.
 
         Args:
@@ -346,6 +363,11 @@ class WorkloadRouter:
 
         Returns:
             The engine's JSON response, or an async stream.
+
+        Raises:
+            BudgetExceededError: If the tenant has exceeded its budget.
+            AdmissionTimeoutError: If the request timed out waiting for
+                admission to the engine.
         """
         start_time = time.monotonic()
 
@@ -357,6 +379,22 @@ class WorkloadRouter:
             ).inc()
             raise BudgetExceededError(
                 f"Tenant {tenant_id!r} has exceeded its request budget"
+            )
+
+        # Determine admission priority from request length bucket
+        max_tokens = payload.get("max_tokens", 256)
+        bucket = classify_request_length(max_tokens)
+        priority = BUCKET_PRIORITY.get(bucket, 1)
+
+        # Admission control -- wait for engine capacity
+        admitted = await self.admission_controller.acquire(
+            priority=priority, timeout=30.0
+        )
+        if not admitted:
+            await self.tenant_manager.release_for_tenant(tenant_id)
+            raise AdmissionTimeoutError(
+                queue_depth=self.admission_controller.queue_depth,
+                in_flight=self.admission_controller.in_flight,
             )
 
         try:
@@ -403,6 +441,7 @@ class WorkloadRouter:
             )
             raise
         finally:
+            self.admission_controller.release()
             await self.tenant_manager.release_for_tenant(tenant_id)
 
     async def enqueue_request(
@@ -523,6 +562,16 @@ class WorkloadRouter:
 
             return web.json_response(result)
 
+        except AdmissionTimeoutError as exc:
+            return web.json_response(
+                {
+                    "error": "server overloaded",
+                    "detail": str(exc),
+                    "queue_depth": exc.queue_depth,
+                    "in_flight": exc.in_flight,
+                },
+                status=503,
+            )
         except BudgetExceededError as exc:
             return web.json_response(
                 {"error": str(exc)}, status=429
@@ -602,6 +651,7 @@ class WorkloadRouter:
         return {
             "loaded_models": self.model_stats(),
             "queue_depths": self.queue_depths(),
+            "admission": self.admission_controller.stats,
             "cache": self.cache_manager.snapshot(),
             "tenants": self.tenant_manager.snapshot(),
             "metrics": self.metrics.snapshot(),
