@@ -67,6 +67,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Default engine backend (default: vllm)",
     )
     serve_parser.add_argument(
+        "--max-concurrent",
+        type=int,
+        default=128,
+        help=(
+            "Maximum concurrent requests forwarded to the engine. "
+            "Requests beyond this limit are queued with priority ordering. "
+            "Set based on engine profiling -- above the cliff point, TTFT "
+            "degrades dramatically with minimal throughput gain. (default: 128)"
+        ),
+    )
+    serve_parser.add_argument(
         "--config",
         type=str,
         default=None,
@@ -195,6 +206,7 @@ def _cmd_serve(args: argparse.Namespace) -> None:
             gpu_budget=gpu_budget,
             port=args.port,
             engine=args.engine,
+            max_concurrent=args.max_concurrent,
         )
     config.log_level = args.log_level
 

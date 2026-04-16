@@ -1,5 +1,6 @@
 """InferGrid request routing and model lifecycle management."""
 
+from infergrid.router.admission import AdmissionController, AdmissionTimeoutError
 from infergrid.router.router import (
     BudgetExceededError,
     ModelState,
@@ -8,6 +9,8 @@ from infergrid.router.router import (
 )
 
 __all__ = [
+    "AdmissionController",
+    "AdmissionTimeoutError",
     "BudgetExceededError",
     "ModelState",
     "WorkloadRouter",
