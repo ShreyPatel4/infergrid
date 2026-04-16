@@ -1,0 +1,33 @@
+# Llama 3.1 8B — Dense model baseline
+model_id: "meta-llama/Llama-3.1-8B-Instruct"
+short_name: "llama31-8b"
+architecture: "dense"
+total_params_b: 8
+active_params_b: 8
+
+# Hardware requirements
+min_gpus: 1
+tensor_parallel_size: 1
+recommended_gpu: "A100-80GB"
+estimated_weight_size_gb: 16
+
+# Serving config
+dtype: "bfloat16"
+max_model_len: 8192
+gpu_memory_utilization: 0.85
+
+# vLLM specific
+vllm_extra_args: []
+
+# SGLang specific
+sglang_extra_args: []
+mem_fraction_static: 0.85
+
+# Benchmark config
+concurrency_levels: [1, 8, 32, 64, 128, 256]
+num_requests: 200
+repeats: 3
+
+# Cost estimate
+estimated_hours: 8
+estimated_cost_per_hour: 1.50

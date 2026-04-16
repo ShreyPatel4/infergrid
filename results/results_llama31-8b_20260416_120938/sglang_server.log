@@ -1,0 +1,19 @@
+Skipping import of cpp extensions due to incompatible torch version. Please upgrade to torch >= 2.11.0 (found 2.10.0+cu128).
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/usr/local/lib/python3.11/dist-packages/sglang/launch_server.py", line 5, in <module>
+    from sglang.srt.server import launch_server
+  File "/usr/local/lib/python3.11/dist-packages/sglang/srt/server.py", line 46, in <module>
+    from sglang.srt.managers.data_parallel_controller import (
+  File "/usr/local/lib/python3.11/dist-packages/sglang/srt/managers/data_parallel_controller.py", line 23, in <module>
+    from sglang.srt.managers.io_struct import (
+  File "/usr/local/lib/python3.11/dist-packages/sglang/srt/managers/io_struct.py", line 24, in <module>
+    from sglang.srt.managers.schedule_batch import BaseFinishReason
+  File "/usr/local/lib/python3.11/dist-packages/sglang/srt/managers/schedule_batch.py", line 40, in <module>
+    from sglang.srt.configs.model_config import ModelConfig
+  File "/usr/local/lib/python3.11/dist-packages/sglang/srt/configs/model_config.py", line 23, in <module>
+    from sglang.srt.utils import get_bool_env_var
+  File "/usr/local/lib/python3.11/dist-packages/sglang/srt/utils.py", line 51, in <module>
+    from triton.runtime.cache import (
+ImportError: cannot import name 'default_cache_dir' from 'triton.runtime.cache' (/usr/local/lib/python3.11/dist-packages/triton/runtime/cache.py)

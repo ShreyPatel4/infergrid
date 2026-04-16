@@ -1,0 +1,10 @@
+{
+    "model": "meta-llama/Llama-3.1-8B-Instruct",
+    "concurrency": "1,8,32,64,128,256",
+    "num_requests": 200,
+    "workload": "sharegpt",
+    "seed": 42,
+    "timestamp": "2026-04-16T12:09:40Z",
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "driver": "555.42.02"
+}

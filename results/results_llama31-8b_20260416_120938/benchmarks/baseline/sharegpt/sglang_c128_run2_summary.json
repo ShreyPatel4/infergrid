@@ -1,0 +1,8 @@
+{
+  "error": "no successful requests",
+  "engine": "sglang",
+  "concurrency": 128,
+  "wall_time_ms": 73.51067662239075,
+  "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+  "model_short_name": "Llama-3.1-8B-Instruct"
+}

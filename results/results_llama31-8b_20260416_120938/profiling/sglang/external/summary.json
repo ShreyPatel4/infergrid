@@ -1,0 +1,146 @@
+{
+  "1": {
+    "error": "no successful requests",
+    "concurrency": 1,
+    "wall_time_ms": 3733.1369556486607,
+    "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+    "model_short_name": "Llama-3.1-8B-Instruct",
+    "repeats": 2,
+    "runs": [
+      {
+        "error": "no successful requests",
+        "concurrency": 1,
+        "wall_time_ms": 3733.1369556486607,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      },
+      {
+        "error": "no successful requests",
+        "concurrency": 1,
+        "wall_time_ms": 76.19874179363251,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      }
+    ]
+  },
+  "8": {
+    "error": "no successful requests",
+    "concurrency": 8,
+    "wall_time_ms": 60.58715283870697,
+    "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+    "model_short_name": "Llama-3.1-8B-Instruct",
+    "repeats": 2,
+    "runs": [
+      {
+        "error": "no successful requests",
+        "concurrency": 8,
+        "wall_time_ms": 60.58715283870697,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      },
+      {
+        "error": "no successful requests",
+        "concurrency": 8,
+        "wall_time_ms": 60.26675924658775,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      }
+    ]
+  },
+  "32": {
+    "error": "no successful requests",
+    "concurrency": 32,
+    "wall_time_ms": 64.69432078301907,
+    "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+    "model_short_name": "Llama-3.1-8B-Instruct",
+    "repeats": 2,
+    "runs": [
+      {
+        "error": "no successful requests",
+        "concurrency": 32,
+        "wall_time_ms": 64.69432078301907,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      },
+      {
+        "error": "no successful requests",
+        "concurrency": 32,
+        "wall_time_ms": 58.39726701378822,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      }
+    ]
+  },
+  "64": {
+    "error": "no successful requests",
+    "concurrency": 64,
+    "wall_time_ms": 63.51560540497303,
+    "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+    "model_short_name": "Llama-3.1-8B-Instruct",
+    "repeats": 2,
+    "runs": [
+      {
+        "error": "no successful requests",
+        "concurrency": 64,
+        "wall_time_ms": 63.51560540497303,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      },
+      {
+        "error": "no successful requests",
+        "concurrency": 64,
+        "wall_time_ms": 62.19176389276981,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      }
+    ]
+  },
+  "128": {
+    "error": "no successful requests",
+    "concurrency": 128,
+    "wall_time_ms": 69.72521916031837,
+    "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+    "model_short_name": "Llama-3.1-8B-Instruct",
+    "repeats": 2,
+    "runs": [
+      {
+        "error": "no successful requests",
+        "concurrency": 128,
+        "wall_time_ms": 69.72521916031837,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      },
+      {
+        "error": "no successful requests",
+        "concurrency": 128,
+        "wall_time_ms": 245.59596367180347,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      }
+    ]
+  },
+  "256": {
+    "error": "no successful requests",
+    "concurrency": 256,
+    "wall_time_ms": 76.85799337923527,
+    "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+    "model_short_name": "Llama-3.1-8B-Instruct",
+    "repeats": 2,
+    "runs": [
+      {
+        "error": "no successful requests",
+        "concurrency": 256,
+        "wall_time_ms": 76.85799337923527,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      },
+      {
+        "error": "no successful requests",
+        "concurrency": 256,
+        "wall_time_ms": 71.97156548500061,
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "model_short_name": "Llama-3.1-8B-Instruct"
+      }
+    ]
+  }
+}

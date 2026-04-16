@@ -1,0 +1,2 @@
+timestamp,gpu_index,utilization_pct,memory_used_mb,memory_total_mb,power_draw_w,sm_clock_mhz
+1776349145.9067643,0,0.0,762.4375,81920.0,51.958,210
