@@ -75,6 +75,8 @@ class InferGridConfig:
     models: list[ModelConfig] = field(default_factory=list)
     cache: CacheConfig = field(default_factory=CacheConfig)
     tenant_defaults: TenantDefaults = field(default_factory=TenantDefaults)
+    max_concurrent: int = 128
+    admission_queue_size: int = 1024
     engine_start_timeout_s: int = 300
     health_check_interval_s: int = 10
     log_level: str = "INFO"
@@ -121,6 +123,8 @@ class InferGridConfig:
             models=models,
             cache=cache,
             tenant_defaults=tenant_defaults,
+            max_concurrent=raw.get("max_concurrent", 128),
+            admission_queue_size=raw.get("admission_queue_size", 1024),
             engine_start_timeout_s=raw.get("engine_start_timeout_s", 300),
             health_check_interval_s=raw.get("health_check_interval_s", 10),
             log_level=raw.get("log_level", "INFO"),
@@ -134,6 +138,7 @@ class InferGridConfig:
         gpu_budget: float = 0.80,
         port: int = 8080,
         engine: str = "vllm",
+        max_concurrent: int = 128,
     ) -> InferGridConfig:
         """Build configuration from CLI arguments.
 
@@ -142,6 +147,7 @@ class InferGridConfig:
             gpu_budget: Fraction of GPU memory to use (0.0-1.0).
             port: API server port.
             engine: Default engine backend ("vllm" or "sglang").
+            max_concurrent: Maximum concurrent requests to an engine.
 
         Returns:
             Populated InferGridConfig instance.
@@ -153,4 +159,5 @@ class InferGridConfig:
             port=port,
             gpu_budget_fraction=gpu_budget,
             models=models,
+            max_concurrent=max_concurrent,
         )
