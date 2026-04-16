@@ -1,0 +1,27 @@
+{
+  "error": "no successful requests",
+  "engine": "sglang",
+  "concurrency": 32,
+  "wall_time_ms": 59.13741886615753,
+  "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+  "model_short_name": "Llama-3.1-8B-Instruct",
+  "repeats": 2,
+  "runs": [
+    {
+      "error": "no successful requests",
+      "engine": "sglang",
+      "concurrency": 32,
+      "wall_time_ms": 59.13741886615753,
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "model_short_name": "Llama-3.1-8B-Instruct"
+    },
+    {
+      "error": "no successful requests",
+      "engine": "sglang",
+      "concurrency": 32,
+      "wall_time_ms": 66.95065274834633,
+      "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+      "model_short_name": "Llama-3.1-8B-Instruct"
+    }
+  ]
+}
