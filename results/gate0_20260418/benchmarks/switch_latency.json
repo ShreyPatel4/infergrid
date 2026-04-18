@@ -1,0 +1,13 @@
+{
+  "benchmark": "model_switch_latency",
+  "model_a": "meta-llama/Llama-3.1-8B-Instruct",
+  "model_b": "Qwen/Qwen2.5-7B-Instruct",
+  "num_switches": 20,
+  "cold_swap_ttft_mean_ms": 31.328225135803223,
+  "cold_swap_ttft_p50_ms": 31.33678436279297,
+  "cold_swap_ttft_p99_ms": 32.96905517578125,
+  "cold_swap_ttft_max_ms": 32.987356185913086,
+  "warm_ttft_model_a_mean_ms": 30.220651626586914,
+  "warm_ttft_model_b_mean_ms": 31.23452663421631,
+  "switch_overhead_ms": 0.09369850158691406
+}

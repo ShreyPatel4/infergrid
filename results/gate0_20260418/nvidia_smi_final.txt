@@ -1,0 +1,2 @@
+memory.used [MiB], memory.total [MiB], utilization.gpu [%], power.draw [W]
+55695 MiB, 81920 MiB, 0 %, 71.91 W
