@@ -1,0 +1,126 @@
+2026-04-18 17:11:51 [INFO] __main__: ======================================================================
+2026-04-18 17:11:51 [INFO] __main__: InferGrid Multi-Model Benchmark Harness
+2026-04-18 17:11:51 [INFO] __main__: ======================================================================
+2026-04-18 17:11:51 [INFO] profiling_utils: Environment info:
+2026-04-18 17:11:51 [INFO] profiling_utils:   python_version: 3.11.10 (main, Sep  7 2024, 18:35:41) [GCC 11.4.0]
+2026-04-18 17:11:51 [INFO] profiling_utils:   platform: Linux-6.17.0-14-generic-x86_64-with-glibc2.35
+2026-04-18 17:11:51 [INFO] profiling_utils:   processor: x86_64
+2026-04-18 17:11:51 [INFO] profiling_utils:   nvidia_driver: 580.126.16
+2026-04-18 17:11:51 [INFO] profiling_utils:   gpu_count: 1
+2026-04-18 17:11:51 [INFO] profiling_utils:   gpu_0_name: NVIDIA A100-SXM4-80GB
+2026-04-18 17:11:51 [INFO] profiling_utils:   gpu_0_memory_mb: 81920
+2026-04-18 17:11:51 [INFO] profiling_utils:   random_seed: 42
+2026-04-18 17:11:51 [INFO] __main__: Models: ['meta-llama/Llama-3.1-8B-Instruct', 'Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:11:51 [INFO] __main__: Server: http://localhost:8000
+2026-04-18 17:11:51 [INFO] profiling_utils: Engine at http://localhost:8000 is healthy
+2026-04-18 17:11:51 [INFO] __main__: 
+============================================================
+2026-04-18 17:11:51 [INFO] __main__: Benchmark 1: Model Switch Latency
+2026-04-18 17:11:51 [INFO] __main__: ============================================================
+2026-04-18 17:11:51 [INFO] __main__: === Model Switch Latency Benchmark ===
+2026-04-18 17:11:51 [INFO] __main__: Model A: meta-llama/Llama-3.1-8B-Instruct
+2026-04-18 17:11:51 [INFO] __main__: Model B: Qwen/Qwen2.5-7B-Instruct
+2026-04-18 17:11:51 [INFO] __main__: Warming up model A (meta-llama/Llama-3.1-8B-Instruct)...
+2026-04-18 17:11:51 [INFO] __main__: Starting multi-model benchmark: 5 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:11:55 [INFO] __main__: Model A warm TTFT: 30.2ms (mean)
+2026-04-18 17:11:55 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:11:57 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:11:59 [INFO] __main__: Switch 1/20: A->B TTFT = 33.0ms
+2026-04-18 17:11:59 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:00 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:03 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:04 [INFO] __main__: Switch 2/20: A->B TTFT = 31.0ms
+2026-04-18 17:12:04 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:06 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:08 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:10 [INFO] __main__: Switch 3/20: A->B TTFT = 31.1ms
+2026-04-18 17:12:10 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:11 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:13 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:15 [INFO] __main__: Switch 4/20: A->B TTFT = 31.6ms
+2026-04-18 17:12:15 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:16 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:19 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:20 [INFO] __main__: Switch 5/20: A->B TTFT = 31.6ms
+2026-04-18 17:12:20 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:22 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:24 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:26 [INFO] __main__: Switch 6/20: A->B TTFT = 31.2ms
+2026-04-18 17:12:26 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:27 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:29 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:31 [INFO] __main__: Switch 7/20: A->B TTFT = 32.4ms
+2026-04-18 17:12:31 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:33 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:35 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:36 [INFO] __main__: Switch 8/20: A->B TTFT = 32.6ms
+2026-04-18 17:12:36 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:38 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:40 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:42 [INFO] __main__: Switch 9/20: A->B TTFT = 30.4ms
+2026-04-18 17:12:42 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:43 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:46 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:47 [INFO] __main__: Switch 10/20: A->B TTFT = 30.9ms
+2026-04-18 17:12:47 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:49 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:51 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:53 [INFO] __main__: Switch 11/20: A->B TTFT = 31.2ms
+2026-04-18 17:12:53 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:54 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:12:56 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:58 [INFO] __main__: Switch 12/20: A->B TTFT = 30.3ms
+2026-04-18 17:12:58 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:12:59 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:13:02 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:03 [INFO] __main__: Switch 13/20: A->B TTFT = 31.7ms
+2026-04-18 17:13:03 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:05 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:13:07 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:09 [INFO] __main__: Switch 14/20: A->B TTFT = 29.4ms
+2026-04-18 17:13:09 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:10 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:13:12 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:14 [INFO] __main__: Switch 15/20: A->B TTFT = 32.9ms
+2026-04-18 17:13:14 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:15 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:13:18 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:19 [INFO] __main__: Switch 16/20: A->B TTFT = 31.5ms
+2026-04-18 17:13:19 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:21 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:13:23 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:25 [INFO] __main__: Switch 17/20: A->B TTFT = 29.5ms
+2026-04-18 17:13:25 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:26 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:13:29 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:30 [INFO] __main__: Switch 18/20: A->B TTFT = 32.5ms
+2026-04-18 17:13:30 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:32 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:13:34 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:35 [INFO] __main__: Switch 19/20: A->B TTFT = 30.2ms
+2026-04-18 17:13:35 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:37 [INFO] __main__: Starting multi-model benchmark: 3 requests, concurrency=1, target=http://localhost:8000, models=['meta-llama/Llama-3.1-8B-Instruct']
+2026-04-18 17:13:39 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:41 [INFO] __main__: Switch 20/20: A->B TTFT = 31.8ms
+2026-04-18 17:13:41 [INFO] __main__: Starting multi-model benchmark: 1 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:42 [INFO] __main__: Model switch latency results: {
+  "benchmark": "model_switch_latency",
+  "model_a": "meta-llama/Llama-3.1-8B-Instruct",
+  "model_b": "Qwen/Qwen2.5-7B-Instruct",
+  "num_switches": 20,
+  "cold_swap_ttft_mean_ms": 31.328225135803223,
+  "cold_swap_ttft_p50_ms": 31.33678436279297,
+  "cold_swap_ttft_p99_ms": 32.96905517578125,
+  "cold_swap_ttft_max_ms": 32.987356185913086,
+  "warm_ttft_model_a_mean_ms": 30.220651626586914,
+  "warm_ttft_model_b_mean_ms": 31.23452663421631,
+  "switch_overhead_ms": 0.09369850158691406
+}
+2026-04-18 17:13:42 [INFO] __main__: 
+============================================================
+2026-04-18 17:13:42 [INFO] __main__: Workload: alternating | Concurrency: 1
+2026-04-18 17:13:42 [INFO] __main__: ============================================================
+2026-04-18 17:13:42 [INFO] __main__: === Concurrent Throughput: alternating ===
+2026-04-18 17:13:42 [INFO] __main__: Schedule length: 200, Models: ['meta-llama/Llama-3.1-8B-Instruct', 'Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:13:42 [INFO] profiling_utils: GPU metrics collection started (interval=100ms)
+2026-04-18 17:13:42 [INFO] __main__: Starting multi-model benchmark: 200 requests, concurrency=1, target=http://localhost:8000, models=['Qwen/Qwen2.5-7B-Instruct', 'meta-llama/Llama-3.1-8B-Instruct']
