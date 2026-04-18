@@ -33,3 +33,6 @@ benchmarks/results/
 
 # pytest
 .pytest_cache/
+
+# Gate run tarballs (results are extracted into results/)
+infergrid_gate0_*.tar.gz

@@ -1,0 +1,1422 @@
+2026-04-18 17:10:08,716 [infergrid.router.admission] INFO: AdmissionController initialized: max_concurrent=128, queue_size=1024
+2026-04-18 17:10:08,717 [infergrid.engines.base] INFO: Starting vLLM server: python -m vllm.entrypoints.openai.api_server --model meta-llama/Llama-3.1-8B-Instruct --port 8002 --gpu-memory-utilization 0.35 --tensor-parallel-size 1 --dtype bfloat16 --max-model-len 4096
+2026-04-18 17:10:56,940 [infergrid.engines.base] INFO: vLLM server ready on port 8002 for model meta-llama/Llama-3.1-8B-Instruct
+2026-04-18 17:10:56,940 [infergrid.router.router] INFO: Loaded model meta-llama/Llama-3.1-8B-Instruct on port 8002
+2026-04-18 17:10:56,940 [infergrid.engines.base] INFO: Starting vLLM server: python -m vllm.entrypoints.openai.api_server --model Qwen/Qwen2.5-7B-Instruct --port 8003 --gpu-memory-utilization 0.35 --tensor-parallel-size 1 --dtype bfloat16 --max-model-len 4096
+2026-04-18 17:11:44,997 [infergrid.engines.base] INFO: vLLM server ready on port 8003 for model Qwen/Qwen2.5-7B-Instruct
+2026-04-18 17:11:44,997 [infergrid.router.router] INFO: Loaded model Qwen/Qwen2.5-7B-Instruct on port 8003
+2026-04-18 17:11:44,997 [infergrid.router.router] INFO: WorkloadRouter started with 2 models, 8 queue workers
+2026-04-18 17:11:44,998 [infergrid] INFO: InferGrid serving on http://0.0.0.0:8000 with 2 model(s)
+2026-04-18 17:11:44,998 [infergrid] INFO:   Models: ['meta-llama/Llama-3.1-8B-Instruct', 'Qwen/Qwen2.5-7B-Instruct']
+2026-04-18 17:11:44,998 [infergrid] INFO:   GPU budget: 85%
+2026-04-18 17:11:49,052 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:49 +0000] "GET /v1/models HTTP/1.1" 200 426 "-" "curl/7.81.0"
+2026-04-18 17:11:50,112 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:49 +0000] "POST /v1/chat/completions HTTP/1.1" 200 749 "-" "curl/7.81.0"
+2026-04-18 17:11:50,927 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:50 +0000] "POST /v1/chat/completions HTTP/1.1" 200 707 "-" "curl/7.81.0"
+2026-04-18 17:11:50,955 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:50 +0000] "GET /infergrid/status HTTP/1.1" 200 1546 "-" "curl/7.81.0"
+2026-04-18 17:11:51,549 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:51 +0000] "GET /v1/models HTTP/1.1" 200 426 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:11:52,337 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:51 +0000] "POST /v1/completions HTTP/1.1" 200 16778 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:11:53,123 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:52 +0000] "POST /v1/completions HTTP/1.1" 200 16758 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:11:53,908 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:53 +0000] "POST /v1/completions HTTP/1.1" 200 16787 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:11:54,694 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:53 +0000] "POST /v1/completions HTTP/1.1" 200 16784 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:11:55,480 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:54 +0000] "POST /v1/completions HTTP/1.1" 200 16788 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:11:56,265 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:55 +0000] "POST /v1/completions HTTP/1.1" 200 16753 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:11:57,050 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:56 +0000] "POST /v1/completions HTTP/1.1" 200 16766 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:11:57,837 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:57 +0000] "POST /v1/completions HTTP/1.1" 200 16793 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:11:59,341 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:57 +0000] "POST /v1/completions HTTP/1.1" 200 32289 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:00,842 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:11:59 +0000] "POST /v1/completions HTTP/1.1" 200 32262 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:01,626 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:00 +0000] "POST /v1/completions HTTP/1.1" 200 16758 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:02,414 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:01 +0000] "POST /v1/completions HTTP/1.1" 200 16755 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:03,201 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:02 +0000] "POST /v1/completions HTTP/1.1" 200 16780 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:04,703 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:03 +0000] "POST /v1/completions HTTP/1.1" 200 32278 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:06,206 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:04 +0000] "POST /v1/completions HTTP/1.1" 200 32270 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:06,990 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:06 +0000] "POST /v1/completions HTTP/1.1" 200 16710 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:07,776 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:06 +0000] "POST /v1/completions HTTP/1.1" 200 16779 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:08,560 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:07 +0000] "POST /v1/completions HTTP/1.1" 200 16772 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:10,061 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:08 +0000] "POST /v1/completions HTTP/1.1" 200 32285 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:11,562 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:10 +0000] "POST /v1/completions HTTP/1.1" 200 32194 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:12,348 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:11 +0000] "POST /v1/completions HTTP/1.1" 200 16793 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:13,133 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:12 +0000] "POST /v1/completions HTTP/1.1" 200 16770 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:13,917 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:13 +0000] "POST /v1/completions HTTP/1.1" 200 16791 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:15,417 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:13 +0000] "POST /v1/completions HTTP/1.1" 200 32304 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:16,918 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:15 +0000] "POST /v1/completions HTTP/1.1" 200 32205 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:17,702 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:16 +0000] "POST /v1/completions HTTP/1.1" 200 16766 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:18,487 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:17 +0000] "POST /v1/completions HTTP/1.1" 200 16741 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:19,272 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:18 +0000] "POST /v1/completions HTTP/1.1" 200 16733 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:20,782 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:19 +0000] "POST /v1/completions HTTP/1.1" 200 32151 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:22,282 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:20 +0000] "POST /v1/completions HTTP/1.1" 200 32235 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:23,069 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:22 +0000] "POST /v1/completions HTTP/1.1" 200 16765 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:23,854 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:23 +0000] "POST /v1/completions HTTP/1.1" 200 16760 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:24,641 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:23 +0000] "POST /v1/completions HTTP/1.1" 200 16773 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:26,143 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:24 +0000] "POST /v1/completions HTTP/1.1" 200 32171 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:27,645 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:12:27,647 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:26 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:28,428 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:27 +0000] "POST /v1/completions HTTP/1.1" 200 16797 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:29,212 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:28 +0000] "POST /v1/completions HTTP/1.1" 200 16775 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:29,998 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:29 +0000] "POST /v1/completions HTTP/1.1" 200 16753 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:31,505 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:29 +0000] "POST /v1/completions HTTP/1.1" 200 32252 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:33,010 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:31 +0000] "POST /v1/completions HTTP/1.1" 200 32288 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:33,795 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:33 +0000] "POST /v1/completions HTTP/1.1" 200 16747 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:34,582 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:33 +0000] "POST /v1/completions HTTP/1.1" 200 16788 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:35,370 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:34 +0000] "POST /v1/completions HTTP/1.1" 200 16767 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:36,885 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:35 +0000] "POST /v1/completions HTTP/1.1" 200 32243 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:38,395 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:36 +0000] "POST /v1/completions HTTP/1.1" 200 32232 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:39,188 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:38 +0000] "POST /v1/completions HTTP/1.1" 200 16726 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:39,982 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:39 +0000] "POST /v1/completions HTTP/1.1" 200 16767 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:40,775 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:39 +0000] "POST /v1/completions HTTP/1.1" 200 16761 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:42,283 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:40 +0000] "POST /v1/completions HTTP/1.1" 200 32227 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:43,787 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:42 +0000] "POST /v1/completions HTTP/1.1" 200 32240 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:44,585 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:43 +0000] "POST /v1/completions HTTP/1.1" 200 16774 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:45,382 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:44 +0000] "POST /v1/completions HTTP/1.1" 200 16779 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:46,167 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:45 +0000] "POST /v1/completions HTTP/1.1" 200 16759 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:47,671 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:46 +0000] "POST /v1/completions HTTP/1.1" 200 32194 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:49,181 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:47 +0000] "POST /v1/completions HTTP/1.1" 200 32173 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:49,966 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:49 +0000] "POST /v1/completions HTTP/1.1" 200 16763 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:50,755 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:49 +0000] "POST /v1/completions HTTP/1.1" 200 16752 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:51,540 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:50 +0000] "POST /v1/completions HTTP/1.1" 200 16788 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:53,045 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:51 +0000] "POST /v1/completions HTTP/1.1" 200 32260 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:54,546 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:53 +0000] "POST /v1/completions HTTP/1.1" 200 32237 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:55,330 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:54 +0000] "POST /v1/completions HTTP/1.1" 200 16767 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:56,117 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:55 +0000] "POST /v1/completions HTTP/1.1" 200 16775 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:56,902 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:56 +0000] "POST /v1/completions HTTP/1.1" 200 16762 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:58,402 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:56 +0000] "POST /v1/completions HTTP/1.1" 200 32109 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:12:59,903 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:58 +0000] "POST /v1/completions HTTP/1.1" 200 32199 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:00,691 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:12:59 +0000] "POST /v1/completions HTTP/1.1" 200 16745 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:01,479 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:00 +0000] "POST /v1/completions HTTP/1.1" 200 16744 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:02,262 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:01 +0000] "POST /v1/completions HTTP/1.1" 200 16782 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:03,764 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:02 +0000] "POST /v1/completions HTTP/1.1" 200 32199 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:05,265 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:03 +0000] "POST /v1/completions HTTP/1.1" 200 32266 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:06,051 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:05 +0000] "POST /v1/completions HTTP/1.1" 200 16777 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:06,837 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:06 +0000] "POST /v1/completions HTTP/1.1" 200 16826 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:07,626 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:13:07,627 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:06 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:09,127 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:07 +0000] "POST /v1/completions HTTP/1.1" 200 32262 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:10,630 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:13:10,630 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:09 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:11,417 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:10 +0000] "POST /v1/completions HTTP/1.1" 200 16764 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:12,198 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:11 +0000] "POST /v1/completions HTTP/1.1" 200 16804 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:12,984 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:12 +0000] "POST /v1/completions HTTP/1.1" 200 16787 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:14,494 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:12 +0000] "POST /v1/completions HTTP/1.1" 200 32222 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:15,993 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:14 +0000] "POST /v1/completions HTTP/1.1" 200 32299 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:16,778 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:15 +0000] "POST /v1/completions HTTP/1.1" 200 16719 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:17,564 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:16 +0000] "POST /v1/completions HTTP/1.1" 200 16772 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:18,350 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:17 +0000] "POST /v1/completions HTTP/1.1" 200 16730 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:19,852 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:18 +0000] "POST /v1/completions HTTP/1.1" 200 32218 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:21,354 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:19 +0000] "POST /v1/completions HTTP/1.1" 200 32240 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:22,140 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:21 +0000] "POST /v1/completions HTTP/1.1" 200 16769 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:22,928 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:13:22,929 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:22 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:23,722 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:22 +0000] "POST /v1/completions HTTP/1.1" 200 16772 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:25,236 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:23 +0000] "POST /v1/completions HTTP/1.1" 200 32240 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:26,741 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:25 +0000] "POST /v1/completions HTTP/1.1" 200 32305 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:27,531 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:26 +0000] "POST /v1/completions HTTP/1.1" 200 16767 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:28,326 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:27 +0000] "POST /v1/completions HTTP/1.1" 200 16776 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:29,115 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:28 +0000] "POST /v1/completions HTTP/1.1" 200 16750 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:30,618 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:29 +0000] "POST /v1/completions HTTP/1.1" 200 32239 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:32,117 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:30 +0000] "POST /v1/completions HTTP/1.1" 200 32215 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:32,901 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:13:32,902 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:32 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:33,690 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:32 +0000] "POST /v1/completions HTTP/1.1" 200 16762 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:34,479 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:13:34,481 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:33 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:35,981 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:34 +0000] "POST /v1/completions HTTP/1.1" 200 32244 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:37,479 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:35 +0000] "POST /v1/completions HTTP/1.1" 200 32240 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:38,278 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:37 +0000] "POST /v1/completions HTTP/1.1" 200 16687 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:39,067 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:38 +0000] "POST /v1/completions HTTP/1.1" 200 16741 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:39,854 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:39 +0000] "POST /v1/completions HTTP/1.1" 200 16765 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:41,355 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:39 +0000] "POST /v1/completions HTTP/1.1" 200 32267 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:42,865 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:41 +0000] "POST /v1/completions HTTP/1.1" 200 32295 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:44,473 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:42 +0000] "POST /v1/completions HTTP/1.1" 200 33354 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:45,982 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:44 +0000] "POST /v1/completions HTTP/1.1" 200 32225 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:47,545 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:45 +0000] "POST /v1/completions HTTP/1.1" 200 33382 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:49,046 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:13:49,047 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:47 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:50,606 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:49 +0000] "POST /v1/completions HTTP/1.1" 200 33361 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:52,110 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:50 +0000] "POST /v1/completions HTTP/1.1" 200 32173 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:53,665 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:13:53,665 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:52 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:55,166 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:53 +0000] "POST /v1/completions HTTP/1.1" 200 32119 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:56,722 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:55 +0000] "POST /v1/completions HTTP/1.1" 200 33329 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:58,225 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:56 +0000] "POST /v1/completions HTTP/1.1" 200 32223 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:13:59,782 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:58 +0000] "POST /v1/completions HTTP/1.1" 200 33302 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:01,288 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:13:59 +0000] "POST /v1/completions HTTP/1.1" 200 32289 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:02,848 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:01 +0000] "POST /v1/completions HTTP/1.1" 200 33400 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:04,350 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:02 +0000] "POST /v1/completions HTTP/1.1" 200 32272 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:05,906 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:14:05,907 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:04 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:07,408 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:05 +0000] "POST /v1/completions HTTP/1.1" 200 32227 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:08,966 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:07 +0000] "POST /v1/completions HTTP/1.1" 200 33379 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:10,466 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:08 +0000] "POST /v1/completions HTTP/1.1" 200 32268 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:12,027 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:10 +0000] "POST /v1/completions HTTP/1.1" 200 33409 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:13,529 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:12 +0000] "POST /v1/completions HTTP/1.1" 200 32250 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:15,094 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:13 +0000] "POST /v1/completions HTTP/1.1" 200 33351 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:16,594 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:15 +0000] "POST /v1/completions HTTP/1.1" 200 32244 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:18,152 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:14:18,153 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:16 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:19,654 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:18 +0000] "POST /v1/completions HTTP/1.1" 200 32272 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:21,210 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:19 +0000] "POST /v1/completions HTTP/1.1" 200 33343 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:22,712 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:21 +0000] "POST /v1/completions HTTP/1.1" 200 32243 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:24,269 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:22 +0000] "POST /v1/completions HTTP/1.1" 200 33353 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:25,771 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:24 +0000] "POST /v1/completions HTTP/1.1" 200 32256 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:27,328 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:25 +0000] "POST /v1/completions HTTP/1.1" 200 33322 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:14:28,830 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:27 +0000] "POST /v1/completions HTTP/1.1" 200 32272 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:19:29,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 17:19:29,068 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:14:28 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:19:30,581 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:19:29 +0000] "POST /v1/completions HTTP/1.1" 200 32209 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:24:31,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 17:24:31,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:19:30 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:24:32,587 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:24:31 +0000] "POST /v1/completions HTTP/1.1" 200 32287 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:29:33,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 17:29:33,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:24:32 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:29:34,591 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:29:33 +0000] "POST /v1/completions HTTP/1.1" 200 32283 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:34:35,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 17:34:35,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:29:34 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:34:36,582 [infergrid.router.router] ERROR: Request failed: Cannot write to closing transport
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 561, in handle_request
+    await response.write_eof()
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/web_response.py", line 582, in write_eof
+    await self._payload_writer.write_eof(data)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 330, in write_eof
+    self._write(b"0\r\n\r\n")
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/http_writer.py", line 95, in _write
+    raise ClientConnectionResetError("Cannot write to closing transport")
+aiohttp.client_exceptions.ClientConnectionResetError: Cannot write to closing transport
+2026-04-18 17:34:36,583 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:34:35 +0000] "POST /v1/completions HTTP/1.1" 500 0 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:39:37,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 17:39:37,068 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:34:36 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:39:38,579 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:39:37 +0000] "POST /v1/completions HTTP/1.1" 200 32190 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:44:39,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 17:44:39,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:39:38 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:44:57,847 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:44:57 +0000] "GET /v1/models HTTP/1.1" 200 426 "-" "curl/7.81.0"
+2026-04-18 17:44:57,916 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:44:57 +0000] "GET /infergrid/status HTTP/1.1" 200 1559 "-" "curl/7.81.0"
+2026-04-18 17:49:40,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 17:49:40,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:44:39 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:54:41,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 17:54:41,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:49:40 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 17:59:42,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 17:59:42,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:54:41 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:04:43,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:04:43,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:17:59:42 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:09:44,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:09:44,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:04:43 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:14:45,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:14:45,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:09:44 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:19:46,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:19:46,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:14:45 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:24:47,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:24:47,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:19:46 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:29:48,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:29:48,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:24:47 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:34:49,066 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:34:49,067 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:29:48 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:39:50,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:39:50,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:34:49 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:44:51,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:44:51,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:39:50 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:49:52,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:49:52,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:44:51 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:54:53,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:54:53,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:49:52 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 18:59:54,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 18:59:54,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:54:53 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:04:55,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:04:55,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:18:59:54 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:09:56,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:09:56,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:04:55 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:14:57,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:14:57,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:09:56 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:19:58,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:19:58,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:14:57 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:24:59,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:24:59,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:19:58 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:30:00,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:30:00,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:24:59 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:35:01,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:35:01,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:30:00 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:40:02,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:40:02,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:35:01 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:45:03,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:45:03,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:40:02 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:50:04,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:50:04,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:45:03 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 19:55:05,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 19:55:05,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:50:04 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 20:00:06,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 20:00:06,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:19:55:05 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 20:05:07,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 20:05:07,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:20:00:06 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 20:10:08,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 20:10:08,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:20:05:07 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 20:15:09,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 20:15:09,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:20:10:08 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 20:20:10,064 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 20:20:10,065 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:20:15:09 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 20:25:11,065 [infergrid.router.router] ERROR: Request failed: 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/streams.py", line 707, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/infergrid/src/infergrid/router/router.py", line 559, in handle_request
+    async for chunk in result:
+  File "/workspace/infergrid/src/infergrid/engines/base.py", line 220, in _stream_response
+    async with session.post(url, json=payload) as resp:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client.py", line 766, in _connect_and_send_request
+    await resp.start(conn)
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+  File "/usr/local/lib/python3.11/dist-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+2026-04-18 20:25:11,066 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:20:20:10 +0000] "POST /v1/completions HTTP/1.1" 500 371 "-" "Python/3.11 aiohttp/3.13.5"
+2026-04-18 20:25:14,067 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:20:25:14 +0000] "GET /infergrid/status HTTP/1.1" 200 1564 "-" "curl/7.81.0"
+2026-04-18 20:26:00,410 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:20:26:00 +0000] "GET /infergrid/status HTTP/1.1" 200 1564 "-" "curl/7.81.0"
+2026-04-18 20:26:00,419 [aiohttp.access] INFO: 127.0.0.1 [18/Apr/2026:20:26:00 +0000] "GET /metrics HTTP/1.1" 200 8341 "-" "curl/7.81.0"
