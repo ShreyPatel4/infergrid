@@ -208,6 +208,16 @@ class WorkloadRouter:
         self._workers: list[asyncio.Task[None]] = []
         self._running = False
 
+        # Per-model load locks. Serializes concurrent load_model() calls
+        # for the same model_id; without this, N concurrent requests on a
+        # cold model spawn N engine subprocesses in parallel (each sees
+        # the cache empty in `ensure_model_loaded` and races into
+        # `load_model`). On a 32-RPS flooder hitting a cold engine, this
+        # is a 5-10x fork explosion that OOMs the GPU before any request
+        # can complete.
+        self._load_locks: dict[str, asyncio.Lock] = {}
+        self._load_locks_guard = asyncio.Lock()
+
     # ------------------------------------------------------------------
     # Lifecycle
     # ------------------------------------------------------------------
@@ -354,12 +364,17 @@ class WorkloadRouter:
                 f"Known models: {list(self._model_configs.keys())}"
             )
 
-        # If we are at capacity, evict first
-        max_models = max(1, len(self.config.models))
-        if len(self._models) >= max_models:
-            await self.evict_model()
+        async with self._load_locks_guard:
+            lock = self._load_locks.setdefault(model_id, asyncio.Lock())
 
-        return await self.load_model(config)
+        async with lock:
+            # Re-check under lock — another waiter may have completed.
+            if model_id in self._models:
+                return self._models[model_id]
+            max_models = max(1, len(self.config.models))
+            if len(self._models) >= max_models:
+                await self.evict_model()
+            return await self.load_model(config)
 
     # ------------------------------------------------------------------
     # Request routing
