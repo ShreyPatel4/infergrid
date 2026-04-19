@@ -560,6 +560,12 @@ class WorkloadRouter:
                         if body == b"[DONE]":
                             continue
                         sse_frames += 1
+                        if sse_frames == 1:
+                            self.metrics.record_ttft(
+                                model=model_id,
+                                tenant=tenant_id,
+                                ttft_s=time.monotonic() - start_time,
+                            )
                     yield chunk
             status = "ok"
         except asyncio.TimeoutError:
