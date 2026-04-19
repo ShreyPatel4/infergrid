@@ -108,6 +108,19 @@ class MetricsCollector:
             labelnames=["tenant", "reason"],
             registry=self._registry,
         )
+        # Per-tenant TTFT histogram. The hero metric — quiet-tenant
+        # starvation manifests at p99 here. Buckets span solo baseline
+        # (~50ms) to severe starvation (>10s).
+        self.tenant_ttft_seconds = Histogram(
+            "infergrid_tenant_ttft_seconds",
+            "Time to first token by tenant + model (Prometheus histogram)",
+            labelnames=["model", "tenant"],
+            buckets=(
+                0.025, 0.05, 0.075, 0.1, 0.15, 0.25, 0.5, 1.0, 2.5,
+                5.0, 10.0, 30.0, 60.0,
+            ),
+            registry=self._registry,
+        )
 
         # --- GPU ---
         self.gpu_memory_used_bytes = Gauge(
@@ -147,6 +160,19 @@ class MetricsCollector:
             self.tokens_input.labels(model=model).inc(tokens_in)
         if tokens_out > 0:
             self.tokens_generated.labels(model=model).inc(tokens_out)
+
+    def record_ttft(self, model: str, tenant: str, ttft_s: float) -> None:
+        """Record per-tenant TTFT. Call exactly once per request, on the
+        first non-empty SSE token (sse_frames transition 0→1).
+
+        Args:
+            model: Model identifier.
+            tenant: Tenant identifier.
+            ttft_s: Time to first token in seconds.
+        """
+        if ttft_s < 0:
+            return
+        self.tenant_ttft_seconds.labels(model=model, tenant=tenant).observe(ttft_s)
 
     def record_cache_access(self, hit: bool, tier: str = "gpu") -> None:
         """Record a cache hit or miss.
