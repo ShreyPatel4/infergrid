@@ -26,7 +26,7 @@ A note on the fold-change numbers in this post: **29× is the starvation factor 
 
 vLLM's continuous-batch scheduler is **tenant-blind by design**. Every admitted request goes into the same engine queue and gets batched by arrival, not by who sent it. Once the flooder fills the engine queue, the quiet user's request sits behind 30 flooder prefills no matter what header it carried.
 
-**Why naive admission caps don't work.** Our previous experiment (Gate 1.5, on H100 SXM5, 16,000 requests across four concurrency steps with sustained pressure) showed that capping concurrent admissions on a single-model single-engine workload doesn't lower tail latency — vLLM's own scheduler absorbs overload as well as a coarse upstream cap does, and at moderate concurrency the cap actively *adds* queue-wait. Raw numbers are in `results/gate1_5_20260419/GATE1_5_OUTCOME.md`. Lesson: admission cap is the wrong lever for tail TTFT.
+**Why naive admission caps don't work.** Our previous experiment (Gate 1.5, on H100 SXM5, 16,000 requests across four concurrency steps with sustained pressure) showed that capping concurrent admissions on a single-model single-engine workload doesn't lower tail latency — vLLM's own scheduler absorbs overload as well as a coarse upstream cap does, and at moderate concurrency the cap actively *adds* queue-wait. Raw numbers are in [`results/gate1_5_20260419/GATE1_5_OUTCOME.md`](https://github.com/coconut-labs/infergrid/blob/main/results/gate1_5_20260419/GATE1_5_OUTCOME.md). Lesson: admission cap is the wrong lever for tail TTFT.
 
 **Why DRR alone doesn't work.** We tried Deficit Round Robin admission priority next (Arm 3, then Arm 4 with a tight cap=16). DRR successfully reorders the *admission* queue by tenant deficit, but the saturation lives one layer down — inside vLLM's continuous batcher. The reordering never propagates. Arm 4's tight cap made things worse: slot release rate (16 / ~45s avg hold ≈ 0.36 slot/s) couldn't service even the quiet user's 1 RPS without queueing.
 
@@ -67,11 +67,11 @@ The headline number is the end of an arc, not its beginning. We measured the sam
 
 The Arm 5 → Arm 5b transition is the one we'd point a hostile reviewer at: same hypothesis, two different rate-limit mechanisms, instrumented identically, and the difference falls cleanly out of the per-window data — five transient windows in Arm 5, zero in Arm 5b. We didn't tune the bench around the result; we changed the mechanism and the result moved as theory predicted.
 
-**Pre-launch v3 re-run (vLLM 0.19.1, 300 s sustained, dedicated single-arm A100 pods).** Reran Arms 0, 1, 5b on the version users install today, with 3× the sample size. Quiet p99 numbers came back: solo 53.9 ms (n=320), Arm 1 FIFO 1,585 ms (n=321), Arm 5b token-bucket **61.5 ms post-warmup (n=311), within 1.14× of solo**. The lever still does its job — even more cleanly on the newer scheduler. Raw artifacts: `results/gate2_preprint_v3/`. Two latent bugs surfaced and fixed during the re-run as PRs #58 (TOCTOU race in `ensure_model_loaded`) and #59 (`/health` returned 200 OK while engines cold-loading).
+**Pre-launch v3 re-run (vLLM 0.19.1, 300 s sustained, dedicated single-arm A100 pods).** Reran Arms 0, 1, 5b on the version users install today, with 3× the sample size. Quiet p99 numbers came back: solo 53.9 ms (n=320), Arm 1 FIFO 1,585 ms (n=321), Arm 5b token-bucket **61.5 ms post-warmup (n=311), within 1.14× of solo**. The lever still does its job — even more cleanly on the newer scheduler. Raw artifacts: [`results/gate2_preprint_v3/`](https://github.com/coconut-labs/infergrid/blob/main/results/gate2_preprint_v3/). Two latent bugs surfaced and fixed during the re-run as PRs #58 (TOCTOU race in `ensure_model_loaded`) and #59 (`/health` returned 200 OK while engines cold-loading).
 
-**Pre-launch N=6 generalization (Track C, vLLM 0.19.1, 300 s).** Then we asked: does the guarantee scale? Same engine, same flooder, but now 5 quiet tenants instead of 1. Aggregate quiet p99 (post-warmup, n=1,456): **61.0 ms — 1.13× of solo, the same number the 2-tenant case gave us**. Per-tenant range across the 5 quiet tenants: 56-65 ms p99. **Per-tenant p95 across all 5 tenants spans only 1.2 ms (54.2-55.4 ms) — every quiet tenant gets effectively the same service quality, no tenant is systematically disadvantaged.** Worst-tenant p99 ratio: 1.21× of solo (`quiet_2`). The token bucket holds across N. Full writeup: `results/gate2_n6_v3/GATE2_N6_OUTCOME.md`.
+**Pre-launch N=6 generalization (Track C, vLLM 0.19.1, 300 s).** Then we asked: does the guarantee scale? Same engine, same flooder, but now 5 quiet tenants instead of 1. Aggregate quiet p99 (post-warmup, n=1,456): **61.0 ms — 1.13× of solo, the same number the 2-tenant case gave us**. Per-tenant range across the 5 quiet tenants: 56-65 ms p99. **Per-tenant p95 across all 5 tenants spans only 1.2 ms (54.2-55.4 ms) — every quiet tenant gets effectively the same service quality, no tenant is systematically disadvantaged.** Worst-tenant p99 ratio: 1.21× of solo (`quiet_2`). The token bucket holds across N. Full writeup: [`results/gate2_n6_v3/GATE2_N6_OUTCOME.md`](https://github.com/coconut-labs/infergrid/blob/main/results/gate2_n6_v3/GATE2_N6_OUTCOME.md).
 
-Total spend across the full series: **~$17** (original $1.70 + v3 single-arm pods + Track B histogram + Track C N=6 + Track D inconclusive). Raw artifacts in `results/gate2_fairness_20260419/` (original 120 s), `results/gate2_preprint_v3/` (300 s 2-tenant preprint), and `results/gate2_n6_v3/` (300 s 6-tenant generalization).
+Total spend across the full series: **~$17** (original $1.70 + v3 single-arm pods + Track B histogram + Track C N=6 + Track D inconclusive). Raw artifacts in [`results/gate2_fairness_20260419/`](https://github.com/coconut-labs/infergrid/blob/main/results/gate2_fairness_20260419/) (original 120 s), [`results/gate2_preprint_v3/`](https://github.com/coconut-labs/infergrid/blob/main/results/gate2_preprint_v3/) (300 s 2-tenant preprint), and [`results/gate2_n6_v3/`](https://github.com/coconut-labs/infergrid/blob/main/results/gate2_n6_v3/) (300 s 6-tenant generalization).
 
 ---
 
@@ -83,7 +83,7 @@ We get to make exactly one claim from this data, and we want to be precise about
 - **Synthetic two-tenant workload.** A constant 32 RPS flooder against a 1 RPS quiet user is a clean stress, not real production traffic. We have not tested >2 tenants, bursty arrivals, mixed prompt-length distributions, or non-uniform output lengths.
 - **300-second bench with n=311-321 quiet requests per arm.** Sample size is 3× the original 120 s bench; p99 has multiple supporting observations rather than the single-sample-below-the-tail problem of n=113. The hero p99 of 61.5 ms excludes the first 10 s warmup window because of one JIT-compile transient — explicit in [CORRECTIONS C7](../../results/CORRECTIONS.md) and visible in the bottom-panel chart. All 29 steady-state windows have quiet p99 in 36-65 ms. The N=6 generalization (Track C) has n=1,456 post-warmup samples — p99 stable to four significant figures.
 - **N=6 only.** We've validated the guarantee at 1, 2, and 6 tenants. N=10+ is a roadmap item, not a current claim.
-- **vLLM 0.19.1.** The bench is on the version users will `pip install` today. The original Gate 2-FAIRNESS bench (preserved in `results/gate2_fairness_20260419/`) ran on vLLM 0.8.5 — those numbers are still in the repo as historical evidence.
+- **vLLM 0.19.1.** The bench is on the version users will `pip install` today. The original Gate 2-FAIRNESS bench (preserved in [`results/gate2_fairness_20260419/`](https://github.com/coconut-labs/infergrid/blob/main/results/gate2_fairness_20260419/)) ran on vLLM 0.8.5 — those numbers are still in the repo as historical evidence.
 - **The earlier "scheduling cliff" pitch is gone.** Our previous experiment (Gate 1.5, sustained-pressure powered admission-cap test) decisively falsified the framing that admission caps lower tail latency on single-model single-tenant workloads. The mechanism in this post is *specifically* for multi-tenant contention. If your workload is one tenant, this fix does nothing for you.
 - **No claims about cost, throughput, or QoS guarantees beyond what we measured.** Throughput numbers and steady-state behavior are reported; we don't extrapolate.
 
@@ -108,7 +108,9 @@ curl localhost:8000/v1/completions -H "X-Tenant-ID: quiet" \
 curl localhost:8000/metrics | grep -E "tenant_rejected|admission_queue_depth"
 ```
 
-Repo: **github.com/coconut-labs/infergrid**. Configs reproducing every arm above: `configs/gate2_fairness_*.yaml`. Full Gate 2-FAIRNESS writeup with all per-window traces and raw CSVs: `results/gate2_fairness_20260419/`.
+Repo: **github.com/coconut-labs/infergrid**. Configs reproducing every arm above: `configs/gate2_fairness_*.yaml`. Full Gate 2-FAIRNESS writeup with all per-window traces and raw CSVs: [`results/gate2_fairness_20260419/`](https://github.com/coconut-labs/infergrid/blob/main/results/gate2_fairness_20260419/).
+
+> Waitlist + launch updates: **[infergrid.org](https://infergrid.org)**.
 
 If the experiment doesn't reproduce on your hardware, file an issue with your `prometheus_dump.txt` and `server.log` — that's worth more to us than a star.
 
@@ -116,6 +118,6 @@ If the experiment doesn't reproduce on your hardware, file an issue with your `p
 
 ## Acknowledgments
 
-InferGrid sits on top of vLLM and SGLang; both teams' work is what makes any of this possible. Shadow-review thanks to **Jay** for repeatedly red-teaming framings I'd over-anchored on (including the original "scheduling cliff" pitch this post replaces). Compute was self-funded on RunPod (~$1.70 for this experiment, ~$12 across the full series).
+InferGrid sits on top of vLLM and SGLang; both teams' work is what makes any of this possible. Shadow-review thanks to **Jay** for repeatedly red-teaming framings I'd over-anchored on (including the original "scheduling cliff" pitch this post replaces). Compute was self-funded on RunPod (~$1.70 for this experiment, ~$17 across the full series).
 
 — Shrey
