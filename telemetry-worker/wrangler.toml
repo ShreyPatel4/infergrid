@@ -1,0 +1,24 @@
+name = "infergrid-telemetry"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+
+# 90-day retention sweeper. Aligned with the claim in
+# docs/privacy/telemetry.md. If this cron is removed, update the doc.
+[triggers]
+crons = ["17 3 * * *"]
+
+# D1 binding. Create the database once with:
+#   wrangler d1 create infergrid-telemetry
+# then paste the returned database_id into this block.
+[[d1_databases]]
+binding = "DB"
+database_name = "infergrid-telemetry"
+database_id = "REPLACE_WITH_WRANGLER_OUTPUT"
+
+# KV binding for the per-install_id 24h rate limiter.
+# Create with:
+#   wrangler kv:namespace create RL
+# then paste the returned id.
+[[kv_namespaces]]
+binding = "RL"
+id = "REPLACE_WITH_WRANGLER_OUTPUT"
