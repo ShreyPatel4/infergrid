@@ -1,0 +1,65 @@
+=================== ARM 0 SOLO ===================
+[13:40:14] starting gateway cfg=configs/gate2_fairness_fifo_sglang.yaml log=/workspace/sglang_solo_server.log
+HB wait-engine 13:40:14 elapsed=0s /health=000000
+HB wait-engine 13:40:29 elapsed=15s /health=000000
+[13:40:44] /health=200 after 30s; checking completion path...
+{"id": "31fe2a4661bc49808ad8768c78f05256", "object": "text_completion", "created": 1776778851, "model": "meta-llama/Llama-3.1-8B-Instruct", "choices": [{"index": 0, "text": " , a little out", "logprob
+[13:40:51] completion smoke-test OK, ready
+[13:40:51] bench → /workspace/sglang_solo (flooder=32 quiet=0 n=0 dur=300s)
+2026-04-21 13:40:51,277 [INFO] __main__: Bench: 1 flooder @ 32.0 RPS + 0 quiet @ 0.0 RPS each, duration=300s, model=meta-llama/Llama-3.1-8B-Instruct
+2026-04-21 13:40:51,277 [INFO] __main__: TCPConnector limit=480
+2026-04-21 13:45:52,546 [INFO] __main__: Wrote /workspace/sglang_solo/tenant_flooder.csv (9472 rows)
+2026-04-21 13:45:52,551 [INFO] __main__: Wrote /workspace/sglang_solo/summary.json
+2026-04-21 13:45:52,551 [INFO] __main__: ============================================================
+2026-04-21 13:45:52,551 [INFO] __main__: QUIET AGG (n=0) p50=-1ms p99=-1ms max=-1ms
+2026-04-21 13:45:52,551 [INFO] __main__: FLOOD     (n=9472) p50=53.2ms p99=354.7ms max=806.1ms
+2026-04-21 13:45:52,552 [INFO] __main__: ============================================================
+[13:45:52] stopping gateway+engine
+[13:46:07] GPU mem after stop:
+0
+=================== ARM 1 FIFO CONTENDED ===================
+[13:46:07] starting gateway cfg=configs/gate2_fairness_fifo_sglang.yaml log=/workspace/sglang_fifo_server.log
+HB wait-engine 13:46:07 elapsed=0s /health=000000
+HB wait-engine 13:46:22 elapsed=15s /health=000000
+[13:46:37] /health=200 after 30s; checking completion path...
+{"id": "841c1cf9d83c4783a7a122c52deff86a", "object": "text_completion", "created": 1776779197, "model": "meta-llama/Llama-3.1-8B-Instruct", "choices": [{"index": 0, "text": " all i know there", "logpr
+[13:46:37] completion smoke-test OK, ready
+[13:46:37] bench → /workspace/sglang_fifo (flooder=32 quiet=1 n=1 dur=300s)
+2026-04-21 13:46:37,979 [INFO] __main__: Bench: 1 flooder @ 32.0 RPS + 1 quiet @ 1.0 RPS each, duration=300s, model=meta-llama/Llama-3.1-8B-Instruct
+2026-04-21 13:46:37,979 [INFO] __main__: TCPConnector limit=495
+2026-04-21 13:51:38,986 [INFO] __main__: Wrote /workspace/sglang_fifo/tenant_flooder.csv (9472 rows)
+2026-04-21 13:51:38,991 [INFO] __main__: Wrote /workspace/sglang_fifo/tenant_quiet_0.csv (321 rows)
+2026-04-21 13:51:38,997 [INFO] __main__: Wrote /workspace/sglang_fifo/summary.json
+2026-04-21 13:51:38,997 [INFO] __main__: ============================================================
+2026-04-21 13:51:38,997 [INFO] __main__: QUIET AGG (n=321) p50=55.5ms p99=286.8ms max=370.5ms
+2026-04-21 13:51:38,997 [INFO] __main__: FLOOD     (n=9472) p50=53.8ms p99=356.1ms max=685.8ms
+2026-04-21 13:51:38,997 [INFO] __main__: Per-quiet p99 spread: min=286.8 max=286.8 ratio=1.00x
+2026-04-21 13:51:38,997 [INFO] __main__: ============================================================
+[13:51:39] stopping gateway+engine
+[13:51:54] GPU mem after stop:
+0
+=================== ARM 5b TOKEN-BUCKET ===================
+[13:51:54] starting gateway cfg=configs/gate2_fairness_token_bucket_sglang.yaml log=/workspace/sglang_tokenbucket_server.log
+HB wait-engine 13:51:54 elapsed=0s /health=000000
+HB wait-engine 13:52:09 elapsed=15s /health=000000
+[13:52:24] /health=200 after 30s; checking completion path...
+{"id": "422626a06a7d415686a17e0385491b6a", "object": "text_completion", "created": 1776779544, "model": "meta-llama/Llama-3.1-8B-Instruct", "choices": [{"index": 0, "text": " every body. i", "logprobs
+[13:52:24] completion smoke-test OK, ready
+[13:52:24] bench → /workspace/sglang_tokenbucket (flooder=32 quiet=1 n=1 dur=300s)
+2026-04-21 13:52:24,440 [INFO] __main__: Bench: 1 flooder @ 32.0 RPS + 1 quiet @ 1.0 RPS each, duration=300s, model=meta-llama/Llama-3.1-8B-Instruct
+2026-04-21 13:52:24,440 [INFO] __main__: TCPConnector limit=495
+2026-04-21 13:57:25,211 [INFO] __main__: Wrote /workspace/sglang_tokenbucket/tenant_flooder.csv (9492 rows)
+2026-04-21 13:57:25,215 [INFO] __main__: Wrote /workspace/sglang_tokenbucket/tenant_quiet_0.csv (321 rows)
+2026-04-21 13:57:25,218 [INFO] __main__: Wrote /workspace/sglang_tokenbucket/summary.json
+2026-04-21 13:57:25,218 [INFO] __main__: ============================================================
+2026-04-21 13:57:25,218 [INFO] __main__: QUIET AGG (n=321) p50=43.0ms p99=71.0ms max=101.8ms
+2026-04-21 13:57:25,218 [INFO] __main__: FLOOD     (n=3009) p50=39.0ms p99=68.4ms max=168.8ms
+2026-04-21 13:57:25,218 [INFO] __main__: Per-quiet p99 spread: min=71.0 max=71.0 ratio=1.00x
+2026-04-21 13:57:25,218 [INFO] __main__: ============================================================
+[13:57:25] stopping gateway+engine
+[13:57:40] GPU mem after stop:
+0
+[13:57:40] ALL ARMS DONE
+-rw-r--r-- 1 root root 1061 Apr 21 13:51 /workspace/sglang_fifo/summary.json
+-rw-r--r-- 1 root root  765 Apr 21 13:45 /workspace/sglang_solo/summary.json
+-rw-r--r-- 1 root root 1052 Apr 21 13:57 /workspace/sglang_tokenbucket/summary.json
