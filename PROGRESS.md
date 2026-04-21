@@ -528,3 +528,22 @@ Out-of-repo shipping (LP side, not in this repo's git history):
 - **3 user-side tokens awaiting rotation** — PyPI, Resend, Cloudflare.
 - **4-gate $72 RunPod ladder queued** — 2.1 / 2.4 / 2.3 runnable immediately on the v0.2 configs; 2.2 after harness lands.
 - **Arch-panel feature** — liquid-glass modal triggered from nav, 10 forks decided on defaults; Phase 1 dispatched to a sibling agent.
+
+---
+
+## 2026-04-21 — Gate ladder v0.2 in flight (parallel execution)
+
+Dispatched two parallel bench agents on fresh RunPod pods (H100 SKU after A100-SECURE stuck-provisioning incidents on Apr 20):
+
+- **Gate 2.1 N=8 tenant fairness** — pod `nmhl7l30g9jx1g` (1× H100 80GB SXM @ $2.99/hr). Config `configs/gate21_fairness_n8.yaml`. Background agent cloning repo, installing vLLM 0.19.1, will warm Llama-3.1-8B-Instruct, run 3 arms (solo baseline, FIFO, token-bucket), fill `results/gate21_n8_TBD/` OUTCOME template, open PR. Budget ceiling $4.50. PASS bar: aggregate quiet_p99 ≤ 75 ms AND worst-tenant p99 ≤ 80 ms (N=6 landed 61/65).
+- **Gate 2.4 Mixtral-8x7B MoE fairness** — pod `hstyv0nj0cwwcq` (2× H100 80GB SXM TP=2 @ $5.98/hr). Config `configs/gate24_fairness_mixtral_tp2.yaml`. Background agent running same 3-arm pattern on Mixtral. Budget ceiling $12. PASS bar: quiet_p99 ≤ 2× solo AND per-tenant p99 spread < 1.5×.
+- **Gate 2.2 mixed-prompt-length** — queued after Gate 2.1 completes; reuses that pod via signal file `/tmp/gate21_complete_reuse_pod.txt`.
+- **Gate 2.3 Llama-70B TP=4** — deferred until 2.1 AND 2.4 CONFIRM (budget + de-risk).
+
+### Provisioning notes
+
+- Initial A100-SXM-80GB SECURE pods stalled at `uptime=0` for 7+ min — same SKU issue seen across 2×A100-SXM SECURE tiers. Pivoted to H100 SXM SECURE (HIGH stock) — clean RUNNING state within 3 min.
+- First H100 pods created with `--ports` omitted, only `19123/http` exposed → RunPod entrypoint started `sshd` but port 22 not mapped → `runpodctl ssh info` returned `pod not ready`. Fixed live via `runpodctl pod update --ports "22/tcp,8888/http,19123/http"` which triggered a container restart; SSH came up within 15s.
+- OUTCOME templates for all 4 gates pre-landed on branch `results/gate-ladder-v02-templates` (PR #79) with deliberate `<TBD_*>` sed-replace seams for mechanical fill from bench output.
+- Monitor `bk2ifzhnn` armed with combined budget watcher + 2-min pod heartbeat. Budget alerts at $55 / $65 of the $72 ceiling (raised from $30/$50 per advisor recommendation to accommodate the 2-pod parallel burn rate of ~$9/hr).
+- PR #78 (cbee679) shipped pre-bench: `benchmark_n_tenant_single_model.py --prompt-length-dist` flag unblocks Gate 2.2 harness.
