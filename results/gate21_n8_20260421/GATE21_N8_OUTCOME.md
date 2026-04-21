@@ -34,7 +34,7 @@ All latencies in this section are post-10s warmup, TTFT.
 | Criterion | Value | Result |
 |---|---|---|
 | Arm 5 quiet_p99 (worst of 7) ≤ 110ms (2× solo baseline) | 50.4 ms | **PASS** |
-| Arm 5 flooder gets 429'd (rate-limit fires) | tenant_rejected=13060 (log WARNING count); flooder count_err=6481 | **PASS** |
+| Arm 5 flooder gets 429'd (rate-limit fires) | budget_exceeded WARNINGs=6481 (one per rejected request); flooder count_err=6481 | **PASS** |
 | Arm 5 no quiet tenant gets 429'd (plumbing check) | quiet count_err sum=0 | **PASS** |
 | Arm 5 per-quiet-tenant spread ≤ 1.5× | max/min p50=1.02×, max/min p99=1.06× | **PASS** |
 
@@ -63,7 +63,7 @@ Arm 0 was collected against the DRR-configured server (gate21_fairness_n8.yaml) 
 ### Confirmed
 - **Token-bucket fairness scales at least to N=8 on a single vLLM engine on 1× H100.** Aggregate quiet p99 = 49.8 ms (1.06× of solo 46.8 ms agg), worst quiet tenant p99 = 50.4 ms (1.05× of solo 48.1 ms worst). Both well below pre-committed 75 / 80 ms ceilings.
 - **DRR distributes evenly across 7 tenants (no quiet-vs-quiet starvation).** Quiet-vs-quiet p50 spread 1.02× (range 35.1–35.7 ms), p99 spread 1.06× (range 47.6–50.4 ms). Against the ≤ 1.5× criterion, this is roomy — no single quiet tenant loses the DRR draw.
-- **Budget-layer rejection path works for 8 tenants.** Flooder received 6481 × 429 `budget_exceeded` responses (3009 admitted, 68% rejected) while all 7 quiets received zero 429s. Server.log shows 13,060 `tenant_rejected` WARNING lines, all scoped to `tenant='flooder'`.
+- **Budget-layer rejection path works for 8 tenants.** Flooder received 6481 × 429 `budget_exceeded` responses (3009 admitted, 68% rejected) while all 7 quiets received zero 429s. Server.log shows 6,481 `budget_exceeded` WARNINGs (one per rejected request, matches flooder count_err exactly), all scoped to `tenant='flooder'`.
 
 ### Falsified
 - **Null "fairness degrades with N" falsified for N ∈ {2, 6, 8}.** The N=6 landmark was agg 61.0 ms / worst 65.0 ms. At N=8 these are 49.8 / 50.4 ms — numerically *better*, not worse. The improvement is attributable to the H100 substrate (vs. N=6's A100), not a fairness mechanism, so the honest read is "parity within substrate-noise": the quiet-tenant share does not visibly erode as N grows from 6 to 8 under this load profile.
