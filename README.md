@@ -86,6 +86,12 @@ infergrid man tenants       # fairness mental model + v3 numbers
 infergrid man topics        # list all bundled help pages
 ```
 
+## Telemetry
+
+InferGrid ships with **opt-in, anonymous** install/usage telemetry. The very first time you run any `infergrid` command interactively, you'll see a one-paragraph prompt asking whether to share stats. **The default is no.** If you answer `n` (or just press Enter), nothing is ever transmitted and we never re-prompt. If you answer `y`, each subsequent command sends a seven-field JSON payload — install ID (a locally-minted uuid4), InferGrid version, Python major.minor, OS (`linux`/`darwin`/`win32`), bucketed GPU class (`h100`/`a100`/`rtx4090`/`other`/`none`), the command name (`serve_started` / `doctor_ran`), and a unix timestamp. **Nothing else.** No prompts, no model names, no tenant IDs, no IP capture on the receiver side. The endpoint is a Cloudflare Worker we maintain; source is at [`telemetry-worker/`](telemetry-worker/).
+
+To disable (or toggle later): `infergrid telemetry off` / `infergrid telemetry on` / `infergrid telemetry status`. To hard-disable on a machine regardless of the saved setting, `export INFERGRID_TELEMETRY=0` — that short-circuits the subsystem before it reads or writes anything. Non-interactive sessions (CI, Docker entrypoints, cron) are treated as opt-out automatically; we never block on a prompt. Full policy and per-field rationale: [`docs/privacy/telemetry.md`](docs/privacy/telemetry.md).
+
 ## Architecture
 
 ```

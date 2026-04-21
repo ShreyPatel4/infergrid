@@ -36,7 +36,7 @@ from rich.prompt import Prompt
 from rich.table import Table
 from rich.text import Text
 
-from infergrid import __version__
+from infergrid import __version__, _telemetry
 from infergrid._manpages import get_page, list_topics
 from infergrid.cache.manager import CacheManager
 from infergrid.common.config import InferGridConfig
@@ -186,6 +186,21 @@ def build_parser() -> argparse.ArgumentParser:
         nargs="?",
         default="overview",
         help="Help topic (default: overview). Use 'topics' to list all.",
+    )
+
+    # ── telemetry ──
+    telem_parser = sub.add_parser(
+        "telemetry",
+        help="Inspect or change the opt-in telemetry setting",
+        description=(
+            "Opt-in anonymous install/usage telemetry. See the README's "
+            "'Telemetry' section and docs/privacy/telemetry.md."
+        ),
+    )
+    telem_parser.add_argument(
+        "action",
+        choices=["on", "off", "status"],
+        help="'on' enables, 'off' disables, 'status' prints the current state",
     )
 
     return parser
@@ -623,6 +638,24 @@ def _cmd_doctor(_args: argparse.Namespace) -> None:
 # ─────────────────────────────── man ───────────────────────────────
 
 
+def _cmd_telemetry(args: argparse.Namespace) -> None:
+    """Handle the 'telemetry' subcommand."""
+    if args.action == "status":
+        st = _telemetry.get_status()
+        state = "on" if st["enabled"] else "off"
+        _console.print(f"[bold]telemetry:[/bold] {state}")
+        _console.print(f"  [dim]configured:[/dim]  {st['configured']}")
+        _console.print(f"  [dim]install_id:[/dim]  {st['install_id'] or '—'}")
+        _console.print(f"  [dim]env override:[/dim] {st['env_disabled']}")
+        _console.print(f"  [dim]endpoint set:[/dim] {st['endpoint_set']}")
+        _console.print(f"  [dim]config file:[/dim]  {st['config_path']}")
+        return
+
+    new = _telemetry.set_enabled(args.action == "on")
+    state = "on" if new["enabled"] else "off"
+    _console.print(f"[green]✓[/green] telemetry {state}")
+
+
 def _cmd_man(args: argparse.Namespace) -> None:
     """Handle the 'man' command."""
     topic = args.topic
@@ -660,6 +693,20 @@ def main(argv: Sequence[str] | None = None) -> None:
     except PackageNotFoundError:
         pass  # non-fatal; __init__.py falls back to "0.0.0+unknown"
 
+    # Telemetry hook. Runs before dispatch so first-run prompt lands before
+    # any command output. Never raises; silently swallows everything. The
+    # `telemetry` subcommand itself is exempt — the user is managing the
+    # setting there, we shouldn't send an event as a side effect.
+    if args.command != "telemetry":
+        event = {
+            "serve": "serve_started",
+            "doctor": "doctor_ran",
+        }.get(args.command or "", "install_first_run")
+        try:
+            _telemetry.maybe_prompt_and_record_event(event=event)
+        except Exception:
+            pass
+
     if args.command == "serve":
         _cmd_serve(args)
     elif args.command == "status":
@@ -670,6 +717,8 @@ def main(argv: Sequence[str] | None = None) -> None:
         _cmd_doctor(args)
     elif args.command == "man":
         _cmd_man(args)
+    elif args.command == "telemetry":
+        _cmd_telemetry(args)
     else:
         parser.print_help()
         sys.exit(1)
