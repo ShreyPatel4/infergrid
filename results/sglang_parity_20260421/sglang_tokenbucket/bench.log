@@ -1,0 +1,10 @@
+2026-04-21 13:52:24,440 [INFO] __main__: Bench: 1 flooder @ 32.0 RPS + 1 quiet @ 1.0 RPS each, duration=300s, model=meta-llama/Llama-3.1-8B-Instruct
+2026-04-21 13:52:24,440 [INFO] __main__: TCPConnector limit=495
+2026-04-21 13:57:25,211 [INFO] __main__: Wrote /workspace/sglang_tokenbucket/tenant_flooder.csv (9492 rows)
+2026-04-21 13:57:25,215 [INFO] __main__: Wrote /workspace/sglang_tokenbucket/tenant_quiet_0.csv (321 rows)
+2026-04-21 13:57:25,218 [INFO] __main__: Wrote /workspace/sglang_tokenbucket/summary.json
+2026-04-21 13:57:25,218 [INFO] __main__: ============================================================
+2026-04-21 13:57:25,218 [INFO] __main__: QUIET AGG (n=321) p50=43.0ms p99=71.0ms max=101.8ms
+2026-04-21 13:57:25,218 [INFO] __main__: FLOOD     (n=3009) p50=39.0ms p99=68.4ms max=168.8ms
+2026-04-21 13:57:25,218 [INFO] __main__: Per-quiet p99 spread: min=71.0 max=71.0 ratio=1.00x
+2026-04-21 13:57:25,218 [INFO] __main__: ============================================================

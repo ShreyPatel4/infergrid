@@ -1,0 +1,10 @@
+2026-04-21 13:46:37,979 [INFO] __main__: Bench: 1 flooder @ 32.0 RPS + 1 quiet @ 1.0 RPS each, duration=300s, model=meta-llama/Llama-3.1-8B-Instruct
+2026-04-21 13:46:37,979 [INFO] __main__: TCPConnector limit=495
+2026-04-21 13:51:38,986 [INFO] __main__: Wrote /workspace/sglang_fifo/tenant_flooder.csv (9472 rows)
+2026-04-21 13:51:38,991 [INFO] __main__: Wrote /workspace/sglang_fifo/tenant_quiet_0.csv (321 rows)
+2026-04-21 13:51:38,997 [INFO] __main__: Wrote /workspace/sglang_fifo/summary.json
+2026-04-21 13:51:38,997 [INFO] __main__: ============================================================
+2026-04-21 13:51:38,997 [INFO] __main__: QUIET AGG (n=321) p50=55.5ms p99=286.8ms max=370.5ms
+2026-04-21 13:51:38,997 [INFO] __main__: FLOOD     (n=9472) p50=53.8ms p99=356.1ms max=685.8ms
+2026-04-21 13:51:38,997 [INFO] __main__: Per-quiet p99 spread: min=286.8 max=286.8 ratio=1.00x
+2026-04-21 13:51:38,997 [INFO] __main__: ============================================================
