@@ -1,200 +1,136 @@
-# KVWarden
+# kvwarden
 
 [![PyPI](https://img.shields.io/pypi/v/kvwarden.svg)](https://pypi.org/project/kvwarden/)
 [![Python](https://img.shields.io/pypi/pyversions/kvwarden.svg)](https://pypi.org/project/kvwarden/)
 [![CI](https://github.com/coconut-labs/kvwarden/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/coconut-labs/kvwarden/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Tenant-fair LLM inference orchestration on a single GPU. No Kubernetes.**
+Tenant-fair LLM inference on one GPU. Sits in front of vLLM/SGLang, rate-limits per tenant at admission, and keeps a quiet user fast while a noisy neighbor floods the same engine.
 
-KVWarden is middleware that sits on top of vLLM/SGLang and gives a quiet user predictable TTFT even when a noisy neighbor is hammering the same shared engine. One pip install. No cluster. No YAML pile.
-
-## The hero number
-
-![Quiet-tenant TTFT under noisy-neighbor contention — three arms compared on log scale, with the per-window trace showing zero warmup transients in the token-bucket arm](docs/launch/figures/launch_hero_chart.png)
-
-Single A100-SXM4 80GB, Llama-3.1-8B, vLLM 0.19.1, two clients sharing one engine: a flooder at 32 RPS, a quiet user at 1 RPS, **300 s sustained**.
+**Hero number.** A100-SXM4, Llama-3.1-8B, vLLM 0.19.1, two tenants sharing one engine, 300 s sustained:
 
 | | Quiet user TTFT p99 |
 |---|---:|
-| Solo (no contention) | 53.9 ms |
-| KVWarden FIFO under flooder, no rate-limit | **1,585 ms** |
-| KVWarden + token-bucket rate-limit | **61.5 ms** (within **1.14× of solo**) |
+| Solo (no contention) | **53.9 ms** |
+| FIFO under flooder (no rate-limit) | **1,585 ms** (29x starvation) |
+| kvwarden token-bucket under flooder | **61.5 ms** (1.14x solo) |
 
-Ten lines of YAML. No application code change. **The quiet user is essentially unaware the flooder exists** — within 14% of the no-contention baseline.
-
-p99 figures exclude the first 10 s warmup window (vLLM JIT-compile transient, single-spike outlier; see [CORRECTIONS C7](results/CORRECTIONS.md)). All 29 steady-state windows after t=10 s have quiet p99 between 36 ms and 65 ms.
-
-Full writeup: [`results/gate2_preprint_v3/`](results/gate2_preprint_v3/) and the original 5-arm experimental arc at [`results/gate2_fairness_20260419/`](results/gate2_fairness_20260419/) (vLLM 0.8.5, 120 s — newer steady-state numbers in v3 are more honest for current vLLM users).
-
-## What KVWarden is and isn't
-
-KVWarden is a thin orchestration layer (~3,500 LOC) that sits between your app and vLLM/SGLang. It adds three things engines can't do internally:
-
-1. **Per-tenant token-bucket rate limiting at the budget gate.** This is the load-bearing mechanism (validated empirically — see Gate 2-FAIRNESS results). Engines have no concept of a tenant; KVWarden does.
-2. **Multi-model lifecycle management** on a single GPU — frequency+recency eviction, hot-swap routing, no-K8s.
-3. **OpenAI-compatible HTTP API** in front of multiple engines, so your app code doesn't change.
-
-It is **not** a vLLM/SGLang replacement. It runs them as subprocesses and proxies to them. It is **not** a Kubernetes alternative for datacenter workloads — Dynamo, llm-d, Mammoth do that better. It is **not** going to magically lower single-tenant TTFT — Gate 1.5 measured a robust DISCONFIRM there; vLLM's continuous batching matches a coarse upstream cap on single-tenant single-model workloads.
-
-## Why KVWarden
-
-Every existing solution requires Kubernetes or gives up tenant fairness:
-
-| System | K8s Required | Multi-Model | Per-Tenant Fairness | Hardware |
-|---|:---:|:---:|:---:|---|
-| NVIDIA Dynamo v1.0 | Yes | Yes | No | NVIDIA only, datacenter |
-| llm-d v0.5 (CNCF) | Yes | 1/pool | No | NVIDIA, datacenter |
-| Mammoth (Modular) | Yes | Yes | No | NVIDIA + AMD, datacenter |
-| AIBrix v0.6 | Yes | Yes | No | NVIDIA, datacenter |
-| Ollama | No | LRU eviction | No | Multi, single node |
-| Vanilla vLLM/SGLang | No | One model per process | No | Single node |
-| **KVWarden** | **No** | **Yes (frequency+recency)** | **Yes (token bucket + DRR)** | **Single node, 1-4 GPUs** |
-
-The "multi-tenant on a small shared box without K8s" cell is empty. That's the gap KVWarden fills.
-
-## Quickstart
+Ten lines of YAML. No application code change. Raw artifacts: [`results/gate2_preprint_v3/`](results/gate2_preprint_v3/).
 
 ```bash
 pip install kvwarden
+```
+
+## Quickstart
+
+kvwarden does not bundle vLLM. Install an engine separately, then let kvwarden spawn and proxy it.
+
+```bash
+# 1. Install kvwarden + the engine.
+pip install kvwarden
+pip install vllm  # needs a GPU box; see vLLM docs for your CUDA stack
+
+# 2. Start kvwarden. It launches vLLM as a subprocess per the model list
+#    in the config and exposes one OpenAI-compatible endpoint.
 kvwarden serve --config configs/quickstart_fairness.yaml
 
-# Wait until /health returns 200. The first call returns 503 with a
-# {missing_models: [...]} body until the configured engines finish
-# loading (typically 30-90s for an 8B-class model on A100).
+# 3. In another shell, wait for /health and send two tenants at the same model.
 until curl -fs localhost:8000/health > /dev/null; do sleep 2; done
 
-# Hit it as two tenants on the same model:
 curl localhost:8000/v1/completions -H "X-Tenant-ID: noisy" \
-  -d '{"model":"llama31-8b","prompt":"...","max_tokens":64,"stream":true}'
+  -d '{"model":"llama31-8b","prompt":"Hello","max_tokens":64,"stream":true}'
 curl localhost:8000/v1/completions -H "X-Tenant-ID: quiet" \
-  -d '{"model":"llama31-8b","prompt":"...","max_tokens":64,"stream":true}'
+  -d '{"model":"llama31-8b","prompt":"Hello","max_tokens":64,"stream":true}'
 
-# Watch the rate-limit fire and the engine queue stay composed:
+# 4. Watch the token bucket fire and the engine queue stay composed.
 curl localhost:8000/metrics | grep -E "tenant_rejected|admission_queue_depth"
 ```
 
-The [`quickstart_fairness.yaml`](configs/quickstart_fairness.yaml) is heavily commented. For a deeper "when to use which lever" treatment, see the [Tuning Guide](docs/tuning_guide.md) — every recommendation in it traces back to a specific experiment.
+First call returns `503` until vLLM finishes loading (30-90 s on A100 for an 8B). The config at [`configs/quickstart_fairness.yaml`](configs/quickstart_fairness.yaml) is heavily commented; every knob traces back to a specific experiment.
 
-More CLI surface (0.1.2+):
+A Docker Compose bundle is not shipping yet — if you want one, [#109](https://github.com/coconut-labs/kvwarden/issues/109) is open as a good-first-issue.
 
-```bash
-kvwarden --version         # "kvwarden 0.1.2"
-kvwarden doctor            # env check: Python, GPU, engines, port, PyPI version
-kvwarden man               # overview of commands + mental model
-kvwarden man tenants       # fairness mental model + v3 numbers
-kvwarden man topics        # list all bundled help pages
-```
+## Is this for me?
+
+| Tool | Orchestration | Tenant fairness | Engines | Target scale |
+|---|---|---|---|---|
+| NVIDIA Dynamo | Kubernetes | No | Multi | Datacenter |
+| llm-d | Kubernetes | No | vLLM | Datacenter |
+| Ollama | None | No | llama.cpp | Single-user |
+| **kvwarden** | **None** | **Yes** | **vLLM + SGLang** | **Single-node, 2-8 tenants** |
+
+kvwarden is the "shared GPU, a handful of tenants, no cluster" cell. If you already run Kubernetes or you're a single user on your own box, you probably want one of the others.
+
+## How it works
+
+A thin orchestration layer (~3,500 LOC src) sits between your app and vLLM/SGLang. On request arrival, a per-tenant token bucket decides admit-or-429 before the request reaches the engine queue. Admitted requests flow through a length-bucketed admission controller and a DRR priority scheduler, then out to the engine subprocess kvwarden manages. Engines never see tenant identity; kvwarden does, and that's the entire trick. Multi-model lifecycle (freq+recency eviction, hot-swap) lives at the same layer. The HTTP API is OpenAI-compatible so your client code doesn't change.
+
+Deeper read and the component diagram live in [`docs/architecture/overview.md`](docs/architecture/overview.md).
 
 ## Reproduce the hero number
 
-Run the same 300-second noisy-neighbor bench that produced the chart at the top of this README, and print a side-by-side table vs the published numbers. Two modes:
-
 ```bash
-# (a) You already have `kvwarden serve --config configs/gate2_fairness_token_bucket.yaml` running:
-kvwarden bench reproduce-hero
+# Terminal A — start kvwarden on the hero config (vLLM 0.19.1, Llama-3.1-8B).
+kvwarden serve --config configs/gate2_fairness_token_bucket.yaml --port 8000
 
-# (b) You want the CLI to provision a 1x A100 pod for you and tear it down afterwards:
-export RUNPOD_API_KEY=<key>
-export HF_TOKEN=<token>
-kvwarden bench reproduce-hero --pod
+# Terminal B — wait for /health, then run the 300-second bench.
+until curl -fs localhost:8000/health > /dev/null; do sleep 5; done
+kvwarden bench reproduce-hero --flavor=2tenant
 ```
 
-Pick `--flavor 2tenant` (default — the hero), `--flavor n6`, or `--flavor n8`. The command writes `./kvwarden-reproduce-<timestamp>/report.json` with your number, the published reference, and the ratio so you can file an issue with concrete data if they diverge. Full doc: [`docs/reproduce_hero.md`](docs/reproduce_hero.md).
+Needs an A100-SXM4 80GB (or equivalent — 1xH100 works) with vLLM 0.19.1 installed. Runtime is about 300 s for the bench plus ~30 s preflight. Output goes to `./kvwarden-reproduce-<timestamp>/report.json` with your numbers side-by-side against the published reference so you can file an issue with concrete data if they diverge. Other flavors: `--flavor=n6`, `--flavor=n8`. Full doc: [`docs/reproduce_hero.md`](docs/reproduce_hero.md).
+
+## Frontier coverage
+
+The same admission mechanism holds on larger models. Gate 2.3 (70B dense, TP=4 on 4x H100) and Gate 2.4 (Mixtral-8x7B MoE, TP=2 on 2x H100) both land quiet-to-solo p50 ratios between 1.07x and 1.94x — the mechanism lives before the engine boundary, so sharding topology, expert routing, and attention shape don't change the fairness picture. Matrix, caveats, and raw bench pointers in [`docs/launch/frontier_coverage.md`](docs/launch/frontier_coverage.md). The 8B A100 run is the only one with a single-command reproduce path today; 70B and Mixtral wrappers are a roadmap item.
+
+## About the name
+
+kvwarden ships tenant-fair admission today. Tenant-aware KV cache eviction — the feature the name implies — is a scaffold in [`src/kvwarden/cache/manager.py`](src/kvwarden/cache/manager.py), not a shipping feature. The path to making the name true is tracked in [#103](https://github.com/coconut-labs/kvwarden/issues/103) and targets the 0.2 release. If you pip install 0.1.3 expecting KV-cache isolation today, you will not get it; you get admission-gate fairness, which is what the hero number measures.
+
+## What's next
+
+- [#102 T1: Distribution](https://github.com/coconut-labs/kvwarden/issues/102) — 10 onboarding installs in week 1
+- [#103 T2: Name-truth](https://github.com/coconut-labs/kvwarden/issues/103) — tenant-aware KV eviction for 0.2
+- [#104 T3: Moat](https://github.com/coconut-labs/kvwarden/issues/104) — vllm-project/production-stack router + LiteLLM adapter
+- [#105 W1: Launch blockers](https://github.com/coconut-labs/kvwarden/issues/105) — pre-launch QA + day-0 ops
 
 ## Telemetry
 
-KVWarden ships with **opt-in, anonymous** install/usage telemetry. The very first time you run any `kvwarden` command interactively, you'll see a one-paragraph prompt asking whether to share stats. **The default is no.** If you answer `n` (or just press Enter), nothing is ever transmitted and we never re-prompt. If you answer `y`, each subsequent command sends a seven-field JSON payload — install ID (a locally-minted uuid4), KVWarden version, Python major.minor, OS (`linux`/`darwin`/`win32`), bucketed GPU class (`h100`/`a100`/`rtx4090`/`other`/`none`), the command name (`serve_started` / `doctor_ran`), and a unix timestamp. **Nothing else.** No prompts, no model names, no tenant IDs, no IP capture on the receiver side. The endpoint is a Cloudflare Worker we maintain; source is at [`telemetry-worker/`](telemetry-worker/).
-
-To disable (or toggle later): `kvwarden telemetry off` / `kvwarden telemetry on` / `kvwarden telemetry status`. To hard-disable on a machine regardless of the saved setting, `export KVWARDEN_TELEMETRY=0` — that short-circuits the subsystem before it reads or writes anything. Non-interactive sessions (CI, Docker entrypoints, cron) are treated as opt-out automatically; we never block on a prompt. Full policy and per-field rationale: [`docs/privacy/telemetry.md`](docs/privacy/telemetry.md).
-
-## Architecture
-
-```
-                    +---------------------+
-                    |   WorkloadRouter    |  request profiling, length-bucket scheduling
-                    +--------+------------+
-                             |
-              +--------------+--------------+
-              |              |              |
-     +--------v--------+ +--v---+ +--------v--------+
-     |  CacheManager   | |Shared| | TenantManager   |  per-tenant token bucket + budget
-     |  (KV lifecycle) | |State | | rate_limit_burst|
-     +-----------------+ +------+ +-----------------+
-              |                            |
-     +--------v----------------------------v--------+
-     |          vLLM / SGLang Engines (1-N)         |
-     +----------------------------------------------+
-```
-
-| Component | What it does | Source |
-|---|---|---|
-| WorkloadRouter | Length-bucketed admission queue, length-aware scheduling, model lifecycle (freq+recency, not LRU), OpenAI-compatible HTTP API | `src/kvwarden/router/router.py` (655 LOC) |
-| AdmissionController | Concurrency cap with priority queue (lower=served first), Prometheus metrics, sub-ms fast-path | `src/kvwarden/router/admission.py` (309 LOC) |
-| CacheManager | Per-model cache lifecycle (free-on-unload, snapshot) + tiered-eviction scaffold; LMCache integration planned for per-request KV tracking | `src/kvwarden/cache/manager.py` (487 LOC) |
-| TenantManager | Per-tenant budgets, **token-bucket rate limiting** (refill + burst capacity), DRR priority scoring | `src/kvwarden/tenant/manager.py` (267 LOC) |
-| Engine Adapters | Subprocess management for vLLM/SGLang, health checks, HTTP proxying | `src/kvwarden/engines/` (277 LOC) |
-
-Total: 4,100 LOC src + 2,900 LOC tests (153 unit tests passing, ~10 s on CPU).
-
-## Empirical results
-
-Each claim above traces to a specific experiment. Numbers are **honest** — TTFT measurement was rebuilt mid-project after a shadow review caught the original harness was timing SSE first-frame RTT, not first non-empty token (see `results/CORRECTIONS.md` C2/C5).
-
-| Gate | Hardware | Spend | Verdict |
-|---|---|---:|---|
-| Gate 0 (system bring-up) | A100-SXM4 | $5.76 | PASS |
-| Gate 0.6 (real-vLLM bench validation) | A100-SXM4 | $3.17 | PASS |
-| Gate 1 (single-model admission cap, short bench) | H100 SXM5 | $1.00 | DISCONFIRM (under-powered, see Gate 1.5) |
-| Gate 1.5 (powered rerun, 16k req/arm) | H100 SXM5 | $1.30 | **Robust DISCONFIRM** — single-model admission cap is not load-bearing |
-| Gate 2-FAIRNESS (5 arms tenant fairness) | A100-SXM4 | $1.40 | **CONFIRM** — 523× starvation → ~30ms steady state with rate-limit |
-| Gate 2-FAIRNESS Arm 5b (token bucket) | A100-SXM4 | $0.30 | **CLEAN CONFIRM** — quiet within 1.35× of solo, no warmup transient |
-| Gate 2-FAIRNESS Arm 6 (DRR isolation) | A100-SXM4 | $0.30 | DRR not material on this workload — token bucket alone does the work |
-
-Total compute spend: ~$13. Full raw artifacts and per-window traces in `results/`.
+kvwarden ships opt-in, anonymous install/usage telemetry. First interactive run prompts once; default is no; answer `n` or hit Enter and nothing is ever transmitted. Opt in and each command sends seven fields: a locally-minted uuid4 install ID, kvwarden version, Python major.minor, OS, bucketed GPU class, command name, and a unix timestamp. No prompts, model names, tenant IDs, or receiver-side IP capture. Toggle with `kvwarden telemetry off/on/status`; hard-disable with `export KVWARDEN_TELEMETRY=0`. Non-interactive sessions auto-opt-out. Worker source: [`telemetry-worker/`](telemetry-worker/). Full policy: [`docs/privacy/telemetry.md`](docs/privacy/telemetry.md).
 
 ## Tests
 
 ```bash
-pytest tests/unit/        # 153 tests, no GPU required, ~10 s
-ruff check src/ tests/    # lint gate enforced in CI
+pytest tests/unit/        # 153 tests, no GPU needed, ~10 s
+ruff check src/ tests/
 ruff format --check src/ tests/
 ```
 
-## Roadmap
+CI runs this matrix on Python 3.11 and 3.12; a red PR cannot merge.
 
-| Phase | Status | Notes |
-|---|---|---|
-| Phase 1 — vLLM/SGLang profiling | ✅ Done | TTFT numbers under-counted by ~30ms (CORRECTIONS C2); honest TTFT shipped in PR #28/#31 |
-| Phase 2 — Core implementation | ✅ Done | WorkloadRouter, AdmissionController, TenantManager, CacheManager, CLI |
-| Gate 0 — first GPU bring-up | ✅ Done | A100-SXM4, system PASS |
-| Gate 0.6 — bench harness validation | ✅ Done | Real vLLM end-to-end |
-| Gate 1.5 — single-model admission test | ✅ Done | Falsified the original "scheduling cliff" pitch |
-| Gate 2-FAIRNESS — multi-tenant fairness | ✅ Done | Hero number; this README's lead chart |
-| **Launch** | **Tue 2026-05-12** | HN + r/LocalLLaMA + landing page at [kvwarden.org](https://kvwarden.org); waitlist backend + launch post merged (PR #20) |
-| Gate 2.1 — N=8 tenant scaling | Post-launch, day 1 | Extends N=6 CONFIRM to N=8 on 1×A100; config: [`gate21_fairness_n8.yaml`](configs/gate21_fairness_n8.yaml) |
-| Gate 2.4 — Mixtral-8×7B MoE fairness | Post-launch | First MoE test; 2×A100 TP=2; config: [`gate24_fairness_mixtral_tp2.yaml`](configs/gate24_fairness_mixtral_tp2.yaml) |
-| Gate 2.3 — Llama-3.1-70B on 4×A100 TP=4 | Post-launch | Frontier credibility; config: [`gate23_fairness_70b_tp4.yaml`](configs/gate23_fairness_70b_tp4.yaml). ~$36 spend, on-demand SECURE required |
-| Gate 2.2 — mixed prompt-length distribution | Post-launch | Blocked on harness PR (`benchmark_n_tenant_single_model.py` needs a `--prompt-length-dist` flag) |
-| Gate 2-lite — multi-model contention vs Ollama | Post-launch | KVWarden's other differentiator vs Ollama; never benchmarked |
-| KV cache tiering (LMCache integration) | v0.3 | Phase 3 of original roadmap; unblocks Gate 2.5 (32K long-context fairness) |
-| Multi-engine routing (vLLM ↔ SGLang) | v0.2.1 | Phase 1 hinted SGLang 2.2× better at TTFT at c=256 — needs re-validation on v0.19 |
+## Honesty log
 
-## Research artifacts
+Every metric we under-counted and the fix is in [`results/CORRECTIONS.md`](results/CORRECTIONS.md). TTFT measurement was rebuilt mid-project after a shadow review caught the original harness timing SSE first-frame RTT instead of first non-empty token (C2/C5). The 8B hero numbers exclude a 10 s JIT warmup window per C7; all 29 post-warmup windows sit between 36 ms and 65 ms.
 
-- [**Launch post**: "your quiet tenant doesn't have to lose to the noisy one"](docs/launch/gate0_launch_post.md) — the story of the hero number and how it was measured
-- [Gate 2-FAIRNESS OUTCOME](results/gate2_fairness_20260419/GATE2_FAIRNESS_OUTCOME.md) + [SUPPLEMENT (Arm 5b)](results/gate2_fairness_20260419/GATE2_FAIRNESS_SUPPLEMENT_arm5b.md) + [SUPPLEMENT (Arm 6)](results/gate2_fairness_20260419/GATE2_FAIRNESS_SUPPLEMENT_arm6.md)
-- [Gate 1.5 OUTCOME](results/gate1_5_20260419/GATE1_5_OUTCOME.md)
-- [Gate 1 OUTCOME (with Little's Law caveat)](results/gate1_20260419/GATE1_OUTCOME.md)
-- [Tuning Guide](docs/tuning_guide.md) — when to use which lever, with empirical evidence
-- [Inference Orchestration Gap Analysis](docs/inference_orchestration_gaps_report.md) — competitive landscape (April 2026)
-- [Corrections / measurement honesty log](results/CORRECTIONS.md) — every metric we under-counted and the fix
-- [Post-launch tracking backlog](https://github.com/coconut-labs/kvwarden/issues/69) — gates 2.1-2.5 + community/infra/docs items
+## Getting help
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). Bug reports especially welcome with a `prometheus_dump.txt` and `server.log` — that's worth more to us than a star.
+- File a bug: [GitHub Issues](https://github.com/coconut-labs/kvwarden/issues/new/choose). A `prometheus_dump.txt` plus `server.log` is worth more than a star.
+- Questions + launch ops context: [`docs/ops/onboarding_playbook.md`](docs/ops/onboarding_playbook.md).
+- Contributing: [`CONTRIBUTING.md`](CONTRIBUTING.md). Start with a [good first issue](https://github.com/coconut-labs/kvwarden/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).
+
+## Cite as
+
+```bibtex
+@software{kvwarden_2026,
+  title  = {kvwarden: tenant-fair LLM inference on a single GPU},
+  author = {Patel, Shrey and {Coconut Labs contributors}},
+  year   = {2026},
+  version = {0.1.3},
+  url    = {https://github.com/coconut-labs/kvwarden}
+}
+```
