@@ -38,7 +38,7 @@ KVWarden targets both vLLM and SGLang. NVIDIA Dynamo treats SGLang, TensorRT-LLM
 
 ### 5. Prior art has already converged on "above the engine"
 
-Every serious multi-tenant LLM-over-vLLM deployment does admission control at a proxy/router layer. This is the dominant pattern, not an KVWarden invention:
+Every serious multi-tenant LLM-over-vLLM deployment does admission control at a proxy/router layer. This is the dominant pattern, not a KVWarden invention:
 
 | Project | Layer | Multi-tenant mechanism |
 |---|---|---|
