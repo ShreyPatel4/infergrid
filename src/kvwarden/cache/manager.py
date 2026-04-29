@@ -25,16 +25,21 @@ TIER_ORDER: list[str] = ["gpu", "cpu", "ssd"]
 
 @dataclass
 class TenantPolicy:
-    """Tenant-weight policy for KV eviction (T2 — issue #103).
+    """Tenant-weight policy for cache-pressure admission (T2 — issue #103).
 
-    Currently a no-op surface — the API is reserved so test fixtures and the
-    Gate 3 bench config can be written before the W4-W6 implementation lands.
-    See `docs/rfcs/T2-tenant-aware-eviction.md` for the locked semantics.
+    No-op surface today. PR #115 reserves the shape so the RFC, test skeleton,
+    and Gate 3 bench config can land in parallel ahead of the W4-W6 wiring.
 
-    `tenant_weights` will eventually scale a block's `reuse_score` by the
-    block's `tenant_id` weight (default 1.0 for unknown tenants), so a flooder
-    tenant's blocks score down under eviction pressure. Default empty dict =
-    LRU-equivalent behavior; passing `None` to `reuse_score` does the same.
+    Semantics (locked by `docs/rfcs/T2-cache-pressure-admission.md`):
+    `tenant_weights` will multiply per-tenant admission priority **under cache
+    pressure** — NOT eviction order. The earlier eviction framing was wrong:
+    `CacheManager` is a shadow ledger, so block-level reuse_score reordering
+    has no observable effect. Instead, the lever fires when vLLM's
+    `vllm:kv_cache_usage_perc` p99 climbs to ~0.7, at which point the
+    admission gate scales tenant deficit by the per-tenant weight.
+
+    Default empty dict = no scaling = legacy LRU + frequency-decay behavior.
+    `tenant_id` not present in the dict defaults to weight 1.0.
     """
 
     tenant_weights: dict[str, float] = field(default_factory=dict)
@@ -53,7 +58,10 @@ class CacheBlock:
         access_count: Total number of accesses.
         last_access_time: Monotonic timestamp of last access.
         created_time: Monotonic timestamp of creation.
-        tenant_id: Originating tenant (T2 — None until the hot path tags blocks).
+        tenant_id: Originating tenant. Reserved for v0.3 trace-replay
+            analysis; no semantic role in T2's admission-side mechanism
+            (T2 reads the global vLLM cache-usage gauge, not per-block
+            tenant tracking). Field stays for v0.3 utility.
     """
 
     block_id: str
@@ -79,16 +87,18 @@ class CacheBlock:
 
         Uses frequency * exponential-decay(recency) rather than naive LRU.
 
-        T2 (issue #103): `policy` is the surface for tenant-weighted eviction.
-        Currently ignored — the implementation lands W4-W6 after the RFC closes.
-        Callers passing `policy=None` get the legacy behavior.
+        T2 (issue #103): `policy` is a reserved API surface with no semantics
+        in the cache-pressure-admission design — T2's lever lives at the
+        admission gate, not in eviction ordering. Kept on this method for
+        backward compatibility and possible v0.3 use; passing `policy` does
+        nothing today and will continue to do nothing in v0.2.0.
 
         Args:
             now: Current monotonic time.
             freq_weight: Weight for the frequency component.
             recency_weight: Weight for the recency component.
             decay_half_life_s: Half-life in seconds for the recency decay.
-            policy: Tenant-weight policy (T2 — reserved, no-op until W4).
+            policy: Reserved API surface; no-op in T2 (v0.2.0).
 
         Returns:
             Non-negative score; higher means keep longer.
@@ -202,8 +212,9 @@ class CacheManager:
             request_id: Originating request ID.
             num_tokens: Tokens to store.
             tier: Preferred tier ("gpu", "cpu", "ssd").
-            tenant_id: Originating tenant (T2 — currently optional; the hot
-                path will start tagging blocks in W4-W6).
+            tenant_id: Tags blocks for v0.3 per-tenant trace replay. T2's
+                mechanism does NOT read this — admission decisions use the
+                global vLLM cache-usage gauge, not per-block tenant tracking.
 
         Returns:
             The allocated CacheBlock, or None if no tier has space.
@@ -376,8 +387,8 @@ class CacheManager:
         Args:
             tier: Tier to evict from.
             needed_gb: Space needed in GB.
-            policy: Tenant-weight policy passed through to `reuse_score`
-                (T2 — currently a no-op; the W4-W6 implementation will use it).
+            policy: Plumbed through to `reuse_score` for forward-compat.
+                T2 ships no eviction-policy semantics; v0.2.0 leaves this no-op.
 
         Returns:
             True if enough space was freed.
